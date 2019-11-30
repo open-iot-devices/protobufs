@@ -1,0 +1,54 @@
+syntax = "proto3";
+package devices;
+
+message Message {
+    // An unique device id (within given LoRa home network)
+    uint64 device_id = 1;
+    // Sequence is an auto incremented value
+    // Devices (either server/client) should keep sequence number
+    // and process messages exactly once
+    // (reject all messages with sequence less than already processed)
+    // Even if device will send updates every second
+    // counter will last for ~130 years.
+    uint32 sequence = 2;
+    // Type of message embedded into details
+    MessageType type = 3;
+
+    // Embedded protobuf based on type / device_id
+    bytes details = 4;
+}
+
+enum MessageType {
+    // Regular message type e.g. status report, status change, etc
+    REGULAR = 0;
+
+    // Network join state machine
+    // ----------------------------------------------------
+    // | client                   |       server          |
+    // |---------------------------------------------------
+    // | JOIN_REQUEST ->          |                       |
+    // |                          | <- JOIN_REQUEST_OFFER |
+    // | JOIN_REQUEST_ACCEPT ->   |                       |
+    // |                          | <- JOIN_RESPONSE_ACK  |
+    // ----------------------------------------------------
+    // If server is willing devices to join it responds with offer
+    // otherwise simply ignores request.
+    // During device inclusion participans do key exchange
+    // using Diffie–Hellman 
+    // Server response to JOIN_REQUEST
+    // New device accepts JOIN_REQUEST_OFFER
+    JOIN_REQUEST = 5;
+    JOIN_RESPONSE_OFFER = 6;
+    JOIN_REQUEST_ACCEPT = 7;
+    JOIN_RESPONSE_ACK = 8;
+
+    // Leave network state machine
+    // ----------------------------------------------
+    // | client             |       server          |
+    // |---------------------------------------------
+    // | LEAVE_REQUEST ->   |                       |
+    // |                    | <- LEAVE_RESPONSE_ACK |
+    // ----------------------------------------------
+    LEAVE_REQUEST = 10;
+    LEAVE_RESPONSE_ACK = 11;
+}
