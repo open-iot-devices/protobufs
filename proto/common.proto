@@ -10,45 +10,50 @@ message Message {
     // (reject all messages with sequence less than already processed)
     // Even if device will send updates every second
     // counter will last for ~130 years.
+    // Not used with Join/Leave messages
     uint32 sequence = 2;
-    // Type of message embedded into details
-    MessageType type = 3;
 
-    // Embedded protobuf based on type / device_id
-    bytes details = 4;
+    // Message body
+    oneof body {
+        // System messages
+        JoinRequest join_request = 10;
+        JoinResponse join_response = 11;
+        LeaveRequest leave_request = 13;
+        LeaveResponse leave_response = 14;
+    }
 }
 
-enum MessageType {
-    // Regular message type e.g. status report, status change, etc
-    REGULAR = 0;
+// Request to join IoT network from IoT device.
+// controller (server) must be in "accept" mode.
+message JoinRequest {
+    // Device details
+    string name = 1;
+    string manufacturer = 2;
+    string product_url = 3;
+    string protobuf_url = 4;
 
-    // Network join state machine
-    // ----------------------------------------------------
-    // | client                   |       server          |
-    // |---------------------------------------------------
-    // | JOIN_REQUEST ->          |                       |
-    // |                          | <- JOIN_REQUEST_OFFER |
-    // | JOIN_REQUEST_ACCEPT ->   |                       |
-    // |                          | <- JOIN_RESPONSE_ACK  |
-    // ----------------------------------------------------
-    // If server is willing devices to join it responds with offer
-    // otherwise simply ignores request.
-    // During device inclusion participans do key exchange
-    // using Diffie–Hellman 
-    // Server response to JOIN_REQUEST
-    // New device accepts JOIN_REQUEST_OFFER
-    JOIN_REQUEST = 5;
-    JOIN_RESPONSE_OFFER = 6;
-    JOIN_REQUEST_ACCEPT = 7;
-    JOIN_RESPONSE_ACK = 8;
+    // Diffie-Hellman key exchange parameters
+    uint64 dh_p = 7;   // modulus
+    uint64 dh_g = 8;   // base
+    repeated uint32 dh_a = 9;  // "public" key of device
+}
 
-    // Leave network state machine
-    // ----------------------------------------------
-    // | client             |       server          |
-    // |---------------------------------------------
-    // | LEAVE_REQUEST ->   |                       |
-    // |                    | <- LEAVE_RESPONSE_ACK |
-    // ----------------------------------------------
-    LEAVE_REQUEST = 10;
-    LEAVE_RESPONSE_ACK = 11;
+// Controller (server) response to JoinRequest
+message JoinResponse {
+    // Diffie-Hellman key exchange parameters
+    repeated uint32 dh_b = 1;  // "public" key of controller
+    // AES-ECB encoded network_key (128bit / 16 bytes)
+    // Encrypted using shared diffie-hellman key.
+    bytes encrypted_network_key = 2;
+}
+
+// Request to leave IoT network from IoT device
+message LeaveRequest {
+
+}
+
+// Confirmation of device removal to LeaveRequest
+// Optional.
+message LeaveResponse {
+
 }

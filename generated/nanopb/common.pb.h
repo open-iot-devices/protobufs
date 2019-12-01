@@ -14,56 +14,142 @@
 extern "C" {
 #endif
 
-/* Enum definitions */
-typedef enum _devices_MessageType {
-    devices_MessageType_REGULAR = 0,
-    devices_MessageType_JOIN_REQUEST = 5,
-    devices_MessageType_JOIN_RESPONSE_OFFER = 6,
-    devices_MessageType_JOIN_REQUEST_ACCEPT = 7,
-    devices_MessageType_JOIN_RESPONSE_ACK = 8,
-    devices_MessageType_LEAVE_REQUEST = 10,
-    devices_MessageType_LEAVE_RESPONSE_ACK = 11
-} devices_MessageType;
-#define _devices_MessageType_MIN devices_MessageType_REGULAR
-#define _devices_MessageType_MAX devices_MessageType_LEAVE_RESPONSE_ACK
-#define _devices_MessageType_ARRAYSIZE ((devices_MessageType)(devices_MessageType_LEAVE_RESPONSE_ACK+1))
-
 /* Struct definitions */
+typedef struct _devices_JoinResponse {
+    pb_callback_t dh_b;
+    pb_callback_t encrypted_network_key;
+/* @@protoc_insertion_point(struct:devices_JoinResponse) */
+} devices_JoinResponse;
+
+
+typedef struct _devices_LeaveRequest {
+    char dummy_field;
+/* @@protoc_insertion_point(struct:devices_LeaveRequest) */
+} devices_LeaveRequest;
+
+
+typedef struct _devices_LeaveResponse {
+    char dummy_field;
+/* @@protoc_insertion_point(struct:devices_LeaveResponse) */
+} devices_LeaveResponse;
+
+
+typedef struct _devices_JoinRequest {
+    pb_callback_t name;
+    pb_callback_t manufacturer;
+    pb_callback_t product_url;
+    pb_callback_t protobuf_url;
+    uint64_t dh_p;
+    uint64_t dh_g;
+    pb_callback_t dh_a;
+/* @@protoc_insertion_point(struct:devices_JoinRequest) */
+} devices_JoinRequest;
+
+
 typedef struct _devices_Message {
     uint64_t device_id;
     uint32_t sequence;
-    devices_MessageType type;
-    pb_callback_t details;
+    pb_size_t which_body;
+    union {
+        devices_JoinRequest join_request;
+        devices_JoinResponse join_response;
+        devices_LeaveRequest leave_request;
+        devices_LeaveResponse leave_response;
+    } body;
 /* @@protoc_insertion_point(struct:devices_Message) */
 } devices_Message;
 
 
 /* Initializer values for message structs */
-#define devices_Message_init_default             {0, 0, _devices_MessageType_MIN, {{NULL}, NULL}}
-#define devices_Message_init_zero                {0, 0, _devices_MessageType_MIN, {{NULL}, NULL}}
+#define devices_Message_init_default             {0, 0, 0, {devices_JoinRequest_init_default}}
+#define devices_JoinRequest_init_default         {{{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, 0, 0, {{NULL}, NULL}}
+#define devices_JoinResponse_init_default        {{{NULL}, NULL}, {{NULL}, NULL}}
+#define devices_LeaveRequest_init_default        {0}
+#define devices_LeaveResponse_init_default       {0}
+#define devices_Message_init_zero                {0, 0, 0, {devices_JoinRequest_init_zero}}
+#define devices_JoinRequest_init_zero            {{{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, 0, 0, {{NULL}, NULL}}
+#define devices_JoinResponse_init_zero           {{{NULL}, NULL}, {{NULL}, NULL}}
+#define devices_LeaveRequest_init_zero           {0}
+#define devices_LeaveResponse_init_zero          {0}
 
 /* Field tags (for use in manual encoding/decoding) */
+#define devices_JoinResponse_dh_b_tag            1
+#define devices_JoinResponse_encrypted_network_key_tag 2
+#define devices_JoinRequest_name_tag             1
+#define devices_JoinRequest_manufacturer_tag     2
+#define devices_JoinRequest_product_url_tag      3
+#define devices_JoinRequest_protobuf_url_tag     4
+#define devices_JoinRequest_dh_p_tag             7
+#define devices_JoinRequest_dh_g_tag             8
+#define devices_JoinRequest_dh_a_tag             9
+#define devices_Message_join_request_tag         10
+#define devices_Message_join_response_tag        11
+#define devices_Message_leave_request_tag        13
+#define devices_Message_leave_response_tag       14
 #define devices_Message_device_id_tag            1
 #define devices_Message_sequence_tag             2
-#define devices_Message_type_tag                 3
-#define devices_Message_details_tag              4
 
 /* Struct field encoding specification for nanopb */
 #define devices_Message_FIELDLIST(X, a) \
 X(a, STATIC, SINGULAR, UINT64, device_id, 1) \
 X(a, STATIC, SINGULAR, UINT32, sequence, 2) \
-X(a, STATIC, SINGULAR, UENUM, type, 3) \
-X(a, CALLBACK, SINGULAR, BYTES, details, 4)
-#define devices_Message_CALLBACK pb_default_field_callback
+X(a, STATIC, ONEOF, MESSAGE, (body,join_request,body.join_request), 10) \
+X(a, STATIC, ONEOF, MESSAGE, (body,join_response,body.join_response), 11) \
+X(a, STATIC, ONEOF, MESSAGE, (body,leave_request,body.leave_request), 13) \
+X(a, STATIC, ONEOF, MESSAGE, (body,leave_response,body.leave_response), 14)
+#define devices_Message_CALLBACK NULL
 #define devices_Message_DEFAULT NULL
+#define devices_Message_body_join_request_MSGTYPE devices_JoinRequest
+#define devices_Message_body_join_response_MSGTYPE devices_JoinResponse
+#define devices_Message_body_leave_request_MSGTYPE devices_LeaveRequest
+#define devices_Message_body_leave_response_MSGTYPE devices_LeaveResponse
+
+#define devices_JoinRequest_FIELDLIST(X, a) \
+X(a, CALLBACK, SINGULAR, STRING, name, 1) \
+X(a, CALLBACK, SINGULAR, STRING, manufacturer, 2) \
+X(a, CALLBACK, SINGULAR, STRING, product_url, 3) \
+X(a, CALLBACK, SINGULAR, STRING, protobuf_url, 4) \
+X(a, STATIC, SINGULAR, UINT64, dh_p, 7) \
+X(a, STATIC, SINGULAR, UINT64, dh_g, 8) \
+X(a, CALLBACK, REPEATED, UINT32, dh_a, 9)
+#define devices_JoinRequest_CALLBACK pb_default_field_callback
+#define devices_JoinRequest_DEFAULT NULL
+
+#define devices_JoinResponse_FIELDLIST(X, a) \
+X(a, CALLBACK, REPEATED, UINT32, dh_b, 1) \
+X(a, CALLBACK, SINGULAR, BYTES, encrypted_network_key, 2)
+#define devices_JoinResponse_CALLBACK pb_default_field_callback
+#define devices_JoinResponse_DEFAULT NULL
+
+#define devices_LeaveRequest_FIELDLIST(X, a) \
+
+#define devices_LeaveRequest_CALLBACK NULL
+#define devices_LeaveRequest_DEFAULT NULL
+
+#define devices_LeaveResponse_FIELDLIST(X, a) \
+
+#define devices_LeaveResponse_CALLBACK NULL
+#define devices_LeaveResponse_DEFAULT NULL
 
 extern const pb_msgdesc_t devices_Message_msg;
+extern const pb_msgdesc_t devices_JoinRequest_msg;
+extern const pb_msgdesc_t devices_JoinResponse_msg;
+extern const pb_msgdesc_t devices_LeaveRequest_msg;
+extern const pb_msgdesc_t devices_LeaveResponse_msg;
 
 /* Defines for backwards compatibility with code written before nanopb-0.4.0 */
 #define devices_Message_fields &devices_Message_msg
+#define devices_JoinRequest_fields &devices_JoinRequest_msg
+#define devices_JoinResponse_fields &devices_JoinResponse_msg
+#define devices_LeaveRequest_fields &devices_LeaveRequest_msg
+#define devices_LeaveResponse_fields &devices_LeaveResponse_msg
 
 /* Maximum encoded size of messages (where known) */
 /* devices_Message_size depends on runtime parameters */
+/* devices_JoinRequest_size depends on runtime parameters */
+/* devices_JoinResponse_size depends on runtime parameters */
+#define devices_LeaveRequest_size                0
+#define devices_LeaveResponse_size               0
 
 #ifdef __cplusplus
 } /* extern "C" */

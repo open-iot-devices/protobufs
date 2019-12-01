@@ -11,6 +11,17 @@
 PB_BIND(devices_Message, devices_Message, AUTO)
 
 
+PB_BIND(devices_JoinRequest, devices_JoinRequest, AUTO)
+
+
+PB_BIND(devices_JoinResponse, devices_JoinResponse, AUTO)
+
+
+PB_BIND(devices_LeaveRequest, devices_LeaveRequest, AUTO)
+
+
+PB_BIND(devices_LeaveResponse, devices_LeaveResponse, AUTO)
+
 
 
 /* @@protoc_insertion_point(eof) */
