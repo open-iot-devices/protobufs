@@ -1,9 +1,7 @@
 syntax = "proto3";
-package devices;
+package openiot;
 
-message Message {
-    // An unique device id (within given LoRa home network)
-    uint64 device_id = 1;
+message DeviceMessage {
     // Sequence is an auto incremented value
     // Devices (either server/client) should keep sequence number
     // and process messages exactly once
@@ -17,9 +15,7 @@ message Message {
     oneof body {
         // System messages
         JoinRequest join_request = 10;
-        JoinResponse join_response = 11;
         LeaveRequest leave_request = 13;
-        LeaveResponse leave_response = 14;
     }
 }
 
@@ -38,22 +34,7 @@ message JoinRequest {
     repeated uint32 dh_a = 9;  // "public" key of device
 }
 
-// Controller (server) response to JoinRequest
-message JoinResponse {
-    // Diffie-Hellman key exchange parameters
-    repeated uint32 dh_b = 1;  // "public" key of controller
-    // AES-ECB encoded network_key (128bit / 16 bytes)
-    // Encrypted using shared diffie-hellman key.
-    bytes encrypted_network_key = 2;
-}
-
-// Request to leave IoT network from IoT device
+// Request to leave IoT network
 message LeaveRequest {
-
-}
-
-// Confirmation of device removal to LeaveRequest
-// Optional.
-message LeaveResponse {
-
+    string reason = 1;
 }
