@@ -1,3 +1,5 @@
 #!/bin/bash -e
+IMAGE=openiotdevices/generate_protobufs
 
-docker run -v`pwd`:/protobufs -ti --rm openiotdevices/generate_protobufs
+docker run -v`pwd`:/protobufs -ti --rm $IMAGE
+

@@ -1,0 +1,67 @@
+
+syntax = "proto3";
+package openiot;
+
+message HeaderMessage {
+    // Unique (at least at given local network) device ID
+    uint64 device_id = 1;
+    // If message followed by the header is system.
+    // Otherwise it is "user" message, i.e. message known
+    // to device / controller
+    bool system_message = 2;
+    // Encryption parameters
+    oneof encryption {
+        bool plain = 5;
+        bytes aes_iv = 6;
+    }
+}
+
+// All system messages
+message SystemMessage {
+    oneof message {
+        JoinRequest join_request = 1;
+        JoinResponse join_response = 2;
+        LeaveRequest leave_request = 3;
+        LeaveResponse leave_response = 4;
+        DeviceInfoRequest device_info_request = 5;
+        DeviceInfoResponse device_info_response = 6;
+    }
+}
+
+// Request to join IoT network from device.
+// controller (server) must be in "accept" mode.
+message JoinRequest {
+    // Diffie-Hellman key exchange parameters
+    uint64 dh_p = 1;   // modulus
+    uint64 dh_g = 2;   // base
+    repeated uint32 dh_a = 3;  // "public" key of device
+}
+
+// Controller (server) response to JoinRequest
+message JoinResponse {
+    // Diffie-Hellman key exchange parameters
+    repeated uint32 dh_b = 1;  // "public" key of controller
+}
+
+// Request to leave IoT network
+message LeaveRequest {
+    string reason = 1;
+}
+
+// Response to device leave network request
+message LeaveResponse {
+    // Just confirmation from controller
+}
+
+// Controller to device request for addition information
+message DeviceInfoRequest {
+    // Nothing, always request all information
+}
+
+// Device information. In response to controller's request
+message DeviceInfoResponse {
+    string name = 1;
+    string manufacturer = 2;
+    string product_url = 3;
+    string protobuf_url = 4;
+}
