@@ -2,13 +2,11 @@
 syntax = "proto3";
 package openiot;
 
-message HeaderMessage {
-    // Unique (at least at given local network) device ID
+message Header {
+    // Unique (at least at given local network) device ID. It must always
+    // be un-encrypted to let device/controller find decryption key.
+    // Should also match Message.device_id
     uint64 device_id = 1;
-    // If message followed by the header is system.
-    // Otherwise it is "user" message, i.e. message known
-    // to device / controller
-    bool system_message = 2;
     // Encryption parameters
     oneof encryption {
         bool plain = 5;
@@ -16,21 +14,32 @@ message HeaderMessage {
     }
 }
 
-// All system messages
-message SystemMessage {
+message Message {
+    // The same device id as in EcryptionHeader.
+    // Serves mostly to validate successful decryption
+    uint64 device_id = 1;
+    // Auto-incremented sequence number to drop duplicates
+    // Even if device / controller will be sending
+    // updates every second - counter will last in about 136 years
+    uint32 sequence = 2;
+
+    // Actual message
     oneof message {
-        JoinRequest join_request = 1;
-        JoinResponse join_response = 2;
-        LeaveRequest leave_request = 3;
-        LeaveResponse leave_response = 4;
-        DeviceInfoRequest device_info_request = 5;
-        DeviceInfoResponse device_info_response = 6;
+        bytes device_message = 5;
+        bytes controller_message = 6;
+        // System messages
+        SystemJoinRequest system_join_request = 7;
+        SystemJoinResponse system_join_response = 8;
+        SystemLeaveRequest system_leave_request = 9;
+        SystemLeaveResponse system_leave_response = 10;
+        SystemDeviceInfoRequest system_device_info_request = 11;
+        SystemDeviceInfoResponse system_device_info_response = 12;
     }
 }
 
 // Request to join IoT network from device.
 // controller (server) must be in "accept" mode.
-message JoinRequest {
+message SystemJoinRequest {
     // Diffie-Hellman key exchange parameters
     uint64 dh_p = 1;   // modulus
     uint64 dh_g = 2;   // base
@@ -38,28 +47,28 @@ message JoinRequest {
 }
 
 // Controller (server) response to JoinRequest
-message JoinResponse {
+message SystemJoinResponse {
     // Diffie-Hellman key exchange parameters
     repeated uint32 dh_b = 1;  // "public" key of controller
 }
 
-// Request to leave IoT network
-message LeaveRequest {
+// Deveice request to leave IoT network
+message SystemLeaveRequest {
     string reason = 1;
 }
 
-// Response to device leave network request
-message LeaveResponse {
+// Controller response to leave network request
+message SystemLeaveResponse {
     // Just confirmation from controller
 }
 
 // Controller to device request for addition information
-message DeviceInfoRequest {
+message SystemDeviceInfoRequest {
     // Nothing, always request all information
 }
 
 // Device information. In response to controller's request
-message DeviceInfoResponse {
+message SystemDeviceInfoResponse {
     string name = 1;
     string manufacturer = 2;
     string product_url = 3;

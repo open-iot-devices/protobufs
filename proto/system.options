@@ -4,8 +4,8 @@
 * mangle_names: M_STRIP_PACKAGE
 
 # AES_IV is always 16 bytes long so make it inlined
-HeaderMessage.aes_iv fixed_length: true, max_size: 16
+Header.aes_iv fixed_length: true, max_size: 16
 
 # Diffie-Hellman arrays are the same length as AES_KEY -> 16
-JoinRequest.dh_a max_count: 16
-JoinResponse.dh_b max_count: 16
+SystemJoinRequest.dh_a max_count: 16
+SystemJoinResponse.dh_b max_count: 16
