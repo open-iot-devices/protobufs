@@ -1,8 +1,8 @@
 
 syntax = "proto3";
 package openiot;
-import "google/protobuf/any.proto";
 
+import "openiot/system.proto";
 
 message Header {
     // Unique (at least at given local network) device ID. It must always
@@ -17,13 +17,21 @@ message Header {
 }
 
 message Message {
-    // The same device id as in EcryptionHeader.
-    // Serves mostly to validate successful decryption
+    // The same device id as in unencrypted Header.
+    // Serves mostly to validate successful decryption.
     uint64 device_id = 1;
     // Auto-incremented sequence number to drop duplicates
     // Even if device / controller will be sending
     // updates every second - counter will last in about 136 years
     uint32 sequence = 2;
     // Actual message
-    google.protobuf.Any message = 3;
+    oneof message {
+        // System messages
+        SystemJoinRequest system_join_request = 10;
+        SystemJoinResponse system_join_response = 11;
+        SystemLeaveRequest system_leave_request = 12;
+        SystemLeaveResponse system_leave_response = 13;
+        SystemDeviceInfoRequest system_device_info_request = 14;
+        SystemDeviceInfoResponse system_device_info_response = 15;        
+    }
 }
