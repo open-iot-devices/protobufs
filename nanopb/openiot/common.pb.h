@@ -4,7 +4,6 @@
 #ifndef PB_OPENIOT_OPENIOT_COMMON_PB_H_INCLUDED
 #define PB_OPENIOT_OPENIOT_COMMON_PB_H_INCLUDED
 #include <pb.h>
-#include "openiot/system.pb.h"
 
 #if PB_PROTO_HEADER_VERSION != 40
 #error Regenerate this file with the current version of nanopb generator.
@@ -27,36 +26,25 @@ typedef struct _Header {
 typedef struct _Message {
     uint64_t device_id;
     uint32_t sequence;
-    pb_size_t which_message;
-    union {
-        SystemJoinRequest system_join_request;
-        SystemJoinResponse system_join_response;
-        SystemLeaveRequest system_leave_request;
-        SystemLeaveResponse system_leave_response;
-        SystemDeviceInfoRequest system_device_info_request;
-        SystemDeviceInfoResponse system_device_info_response;
-    } message;
+    pb_callback_t name;
+    pb_callback_t value;
 } Message;
 
 
 /* Initializer values for message structs */
 #define Header_init_default                      {0, 0, {0}}
-#define Message_init_default                     {0, 0, 0, {SystemJoinRequest_init_default}}
+#define Message_init_default                     {0, 0, {{NULL}, NULL}, {{NULL}, NULL}}
 #define Header_init_zero                         {0, 0, {0}}
-#define Message_init_zero                        {0, 0, 0, {SystemJoinRequest_init_zero}}
+#define Message_init_zero                        {0, 0, {{NULL}, NULL}, {{NULL}, NULL}}
 
 /* Field tags (for use in manual encoding/decoding) */
 #define Header_plain_tag                         5
 #define Header_aes_iv_tag                        6
 #define Header_device_id_tag                     1
-#define Message_system_join_request_tag          10
-#define Message_system_join_response_tag         11
-#define Message_system_leave_request_tag         12
-#define Message_system_leave_response_tag        13
-#define Message_system_device_info_request_tag   14
-#define Message_system_device_info_response_tag  15
 #define Message_device_id_tag                    1
 #define Message_sequence_tag                     2
+#define Message_name_tag                         3
+#define Message_value_tag                        4
 
 /* Struct field encoding specification for nanopb */
 #define Header_FIELDLIST(X, a) \
@@ -69,20 +57,10 @@ X(a, STATIC,   ONEOF,    FIXED_LENGTH_BYTES, (encryption,aes_iv,encryption.aes_i
 #define Message_FIELDLIST(X, a) \
 X(a, STATIC,   SINGULAR, UINT64,   device_id,         1) \
 X(a, STATIC,   SINGULAR, UINT32,   sequence,          2) \
-X(a, STATIC,   ONEOF,    MESSAGE,  (message,system_join_request,message.system_join_request),  10) \
-X(a, STATIC,   ONEOF,    MESSAGE,  (message,system_join_response,message.system_join_response),  11) \
-X(a, STATIC,   ONEOF,    MESSAGE,  (message,system_leave_request,message.system_leave_request),  12) \
-X(a, STATIC,   ONEOF,    MESSAGE,  (message,system_leave_response,message.system_leave_response),  13) \
-X(a, STATIC,   ONEOF,    MESSAGE,  (message,system_device_info_request,message.system_device_info_request),  14) \
-X(a, STATIC,   ONEOF,    MESSAGE,  (message,system_device_info_response,message.system_device_info_response),  15)
-#define Message_CALLBACK NULL
+X(a, CALLBACK, SINGULAR, STRING,   name,              3) \
+X(a, CALLBACK, SINGULAR, BYTES,    value,             4)
+#define Message_CALLBACK pb_default_field_callback
 #define Message_DEFAULT NULL
-#define Message_message_system_join_request_MSGTYPE SystemJoinRequest
-#define Message_message_system_join_response_MSGTYPE SystemJoinResponse
-#define Message_message_system_leave_request_MSGTYPE SystemLeaveRequest
-#define Message_message_system_leave_response_MSGTYPE SystemLeaveResponse
-#define Message_message_system_device_info_request_MSGTYPE SystemDeviceInfoRequest
-#define Message_message_system_device_info_response_MSGTYPE SystemDeviceInfoResponse
 
 extern const pb_msgdesc_t Header_msg;
 extern const pb_msgdesc_t Message_msg;
@@ -93,7 +71,7 @@ extern const pb_msgdesc_t Message_msg;
 
 /* Maximum encoded size of messages (where known) */
 #define Header_size                              29
-#define Message_size                             (22 + sizeof(union{char f0[120]; char f12[SystemLeaveRequest_size]; char f15[SystemDeviceInfoResponse_size];}))
+/* Message_size depends on runtime parameters */
 
 #ifdef __cplusplus
 } /* extern "C" */

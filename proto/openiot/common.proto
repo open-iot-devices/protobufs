@@ -2,8 +2,6 @@
 syntax = "proto3";
 package openiot;
 
-import "openiot/system.proto";
-
 message Header {
     // Unique (at least at given local network) device ID. It must always
     // be un-encrypted to let device/controller find decryption key.
@@ -24,14 +22,16 @@ message Message {
     // Even if device / controller will be sending
     // updates every second - counter will last in about 136 years
     uint32 sequence = 2;
-    // Actual message
-    oneof message {
-        // System messages
-        SystemJoinRequest system_join_request = 10;
-        SystemJoinResponse system_join_response = 11;
-        SystemLeaveRequest system_leave_request = 12;
-        SystemLeaveResponse system_leave_response = 13;
-        SystemDeviceInfoRequest system_device_info_request = 14;
-        SystemDeviceInfoResponse system_device_info_response = 15;        
-    }
+    
+    // Next 2 fiels basically implements google.protobuf.Any idea:
+    // name (URL) and serialized value.
+    // The reason why it is not used here - it is complicates nanopb.
+
+    // Name must be in format of:
+    //      package_name.message_name
+    // e.g.
+    // openiot.SystemJoinRequest
+    string name = 3;
+    // Serialized bytes of the message
+    bytes value = 4;
 }
