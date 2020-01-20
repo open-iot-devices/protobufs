@@ -1,0 +1,29 @@
+
+syntax = "proto3";
+package openiot;
+import "google/protobuf/any.proto";
+
+
+message Header {
+    // Unique (at least at given local network) device ID. It must always
+    // be un-encrypted to let device/controller find decryption key.
+    // Should also match Message.device_id
+    uint64 device_id = 1;
+    // Encryption parameters
+    oneof encryption {
+        bool plain = 5;
+        bytes aes_iv = 6;
+    }
+}
+
+message Message {
+    // The same device id as in EcryptionHeader.
+    // Serves mostly to validate successful decryption
+    uint64 device_id = 1;
+    // Auto-incremented sequence number to drop duplicates
+    // Even if device / controller will be sending
+    // updates every second - counter will last in about 136 years
+    uint32 sequence = 2;
+    // Actual message
+    google.protobuf.Any message = 3;
+}

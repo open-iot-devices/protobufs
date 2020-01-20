@@ -33,15 +33,6 @@ typedef struct _SystemLeaveResponse {
     char dummy_field;
 } SystemLeaveResponse;
 
-typedef struct _Header {
-    uint64_t device_id;
-    pb_size_t which_encryption;
-    union {
-        bool plain;
-        pb_byte_t aes_iv[16];
-    } encryption;
-} Header;
-
 typedef struct _SystemJoinRequest {
     uint64_t dh_p;
     uint64_t dh_g;
@@ -54,34 +45,14 @@ typedef struct _SystemJoinResponse {
     uint32_t dh_b[16];
 } SystemJoinResponse;
 
-typedef struct _Message {
-    uint64_t device_id;
-    uint32_t sequence;
-    pb_size_t which_message;
-    union {
-        pb_callback_t device_message;
-        pb_callback_t controller_message;
-        SystemJoinRequest system_join_request;
-        SystemJoinResponse system_join_response;
-        SystemLeaveRequest system_leave_request;
-        SystemLeaveResponse system_leave_response;
-        SystemDeviceInfoRequest system_device_info_request;
-        SystemDeviceInfoResponse system_device_info_response;
-    } message;
-} Message;
-
 
 /* Initializer values for message structs */
-#define Header_init_default                      {0, 0, {0}}
-#define Message_init_default                     {0, 0, 0, {{{NULL}, NULL}}}
 #define SystemJoinRequest_init_default           {0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
 #define SystemJoinResponse_init_default          {0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
 #define SystemLeaveRequest_init_default          {{{NULL}, NULL}}
 #define SystemLeaveResponse_init_default         {0}
 #define SystemDeviceInfoRequest_init_default     {0}
 #define SystemDeviceInfoResponse_init_default    {{{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}}
-#define Header_init_zero                         {0, 0, {0}}
-#define Message_init_zero                        {0, 0, 0, {{{NULL}, NULL}}}
 #define SystemJoinRequest_init_zero              {0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
 #define SystemJoinResponse_init_zero             {0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
 #define SystemLeaveRequest_init_zero             {{{NULL}, NULL}}
@@ -95,52 +66,12 @@ typedef struct _Message {
 #define SystemDeviceInfoResponse_product_url_tag 3
 #define SystemDeviceInfoResponse_protobuf_url_tag 4
 #define SystemLeaveRequest_reason_tag            1
-#define Header_plain_tag                         5
-#define Header_aes_iv_tag                        6
-#define Header_device_id_tag                     1
 #define SystemJoinRequest_dh_p_tag               1
 #define SystemJoinRequest_dh_g_tag               2
 #define SystemJoinRequest_dh_a_tag               3
 #define SystemJoinResponse_dh_b_tag              1
-#define Message_device_message_tag               5
-#define Message_controller_message_tag           6
-#define Message_system_join_request_tag          7
-#define Message_system_join_response_tag         8
-#define Message_system_leave_request_tag         9
-#define Message_system_leave_response_tag        10
-#define Message_system_device_info_request_tag   11
-#define Message_system_device_info_response_tag  12
-#define Message_device_id_tag                    1
-#define Message_sequence_tag                     2
 
 /* Struct field encoding specification for nanopb */
-#define Header_FIELDLIST(X, a) \
-X(a, STATIC,   SINGULAR, UINT64,   device_id,         1) \
-X(a, STATIC,   ONEOF,    BOOL,     (encryption,plain,encryption.plain),   5) \
-X(a, STATIC,   ONEOF,    FIXED_LENGTH_BYTES, (encryption,aes_iv,encryption.aes_iv),   6)
-#define Header_CALLBACK NULL
-#define Header_DEFAULT NULL
-
-#define Message_FIELDLIST(X, a) \
-X(a, STATIC,   SINGULAR, UINT64,   device_id,         1) \
-X(a, STATIC,   SINGULAR, UINT32,   sequence,          2) \
-X(a, CALLBACK, ONEOF,    BYTES,    (message,device_message,message.device_message),   5) \
-X(a, CALLBACK, ONEOF,    BYTES,    (message,controller_message,message.controller_message),   6) \
-X(a, STATIC,   ONEOF,    MESSAGE,  (message,system_join_request,message.system_join_request),   7) \
-X(a, STATIC,   ONEOF,    MESSAGE,  (message,system_join_response,message.system_join_response),   8) \
-X(a, STATIC,   ONEOF,    MESSAGE,  (message,system_leave_request,message.system_leave_request),   9) \
-X(a, STATIC,   ONEOF,    MESSAGE,  (message,system_leave_response,message.system_leave_response),  10) \
-X(a, STATIC,   ONEOF,    MESSAGE,  (message,system_device_info_request,message.system_device_info_request),  11) \
-X(a, STATIC,   ONEOF,    MESSAGE,  (message,system_device_info_response,message.system_device_info_response),  12)
-#define Message_CALLBACK pb_default_field_callback
-#define Message_DEFAULT NULL
-#define Message_message_system_join_request_MSGTYPE SystemJoinRequest
-#define Message_message_system_join_response_MSGTYPE SystemJoinResponse
-#define Message_message_system_leave_request_MSGTYPE SystemLeaveRequest
-#define Message_message_system_leave_response_MSGTYPE SystemLeaveResponse
-#define Message_message_system_device_info_request_MSGTYPE SystemDeviceInfoRequest
-#define Message_message_system_device_info_response_MSGTYPE SystemDeviceInfoResponse
-
 #define SystemJoinRequest_FIELDLIST(X, a) \
 X(a, STATIC,   SINGULAR, UINT64,   dh_p,              1) \
 X(a, STATIC,   SINGULAR, UINT64,   dh_g,              2) \
@@ -176,8 +107,6 @@ X(a, CALLBACK, SINGULAR, STRING,   protobuf_url,      4)
 #define SystemDeviceInfoResponse_CALLBACK pb_default_field_callback
 #define SystemDeviceInfoResponse_DEFAULT NULL
 
-extern const pb_msgdesc_t Header_msg;
-extern const pb_msgdesc_t Message_msg;
 extern const pb_msgdesc_t SystemJoinRequest_msg;
 extern const pb_msgdesc_t SystemJoinResponse_msg;
 extern const pb_msgdesc_t SystemLeaveRequest_msg;
@@ -186,8 +115,6 @@ extern const pb_msgdesc_t SystemDeviceInfoRequest_msg;
 extern const pb_msgdesc_t SystemDeviceInfoResponse_msg;
 
 /* Defines for backwards compatibility with code written before nanopb-0.4.0 */
-#define Header_fields &Header_msg
-#define Message_fields &Message_msg
 #define SystemJoinRequest_fields &SystemJoinRequest_msg
 #define SystemJoinResponse_fields &SystemJoinResponse_msg
 #define SystemLeaveRequest_fields &SystemLeaveRequest_msg
@@ -196,8 +123,6 @@ extern const pb_msgdesc_t SystemDeviceInfoResponse_msg;
 #define SystemDeviceInfoResponse_fields &SystemDeviceInfoResponse_msg
 
 /* Maximum encoded size of messages (where known) */
-#define Header_size                              29
-/* Message_size depends on runtime parameters */
 #define SystemJoinRequest_size                   118
 #define SystemJoinResponse_size                  96
 /* SystemLeaveRequest_size depends on runtime parameters */

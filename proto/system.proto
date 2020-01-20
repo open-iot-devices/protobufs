@@ -2,41 +2,6 @@
 syntax = "proto3";
 package openiot;
 
-message Header {
-    // Unique (at least at given local network) device ID. It must always
-    // be un-encrypted to let device/controller find decryption key.
-    // Should also match Message.device_id
-    uint64 device_id = 1;
-    // Encryption parameters
-    oneof encryption {
-        bool plain = 5;
-        bytes aes_iv = 6;
-    }
-}
-
-message Message {
-    // The same device id as in EcryptionHeader.
-    // Serves mostly to validate successful decryption
-    uint64 device_id = 1;
-    // Auto-incremented sequence number to drop duplicates
-    // Even if device / controller will be sending
-    // updates every second - counter will last in about 136 years
-    uint32 sequence = 2;
-
-    // Actual message
-    oneof message {
-        bytes device_message = 5;
-        bytes controller_message = 6;
-        // System messages
-        SystemJoinRequest system_join_request = 7;
-        SystemJoinResponse system_join_response = 8;
-        SystemLeaveRequest system_leave_request = 9;
-        SystemLeaveResponse system_leave_response = 10;
-        SystemDeviceInfoRequest system_device_info_request = 11;
-        SystemDeviceInfoResponse system_device_info_response = 12;
-    }
-}
-
 // Request to join IoT network from device.
 // controller (server) must be in "accept" mode.
 message SystemJoinRequest {
