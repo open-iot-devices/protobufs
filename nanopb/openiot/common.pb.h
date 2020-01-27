@@ -26,16 +26,15 @@ typedef struct _Header {
 typedef struct _Message {
     uint64_t device_id;
     uint32_t sequence;
-    pb_callback_t name;
-    pb_callback_t value;
+    bool is_system;
 } Message;
 
 
 /* Initializer values for message structs */
 #define Header_init_default                      {0, 0, {0}}
-#define Message_init_default                     {0, 0, {{NULL}, NULL}, {{NULL}, NULL}}
+#define Message_init_default                     {0, 0, 0}
 #define Header_init_zero                         {0, 0, {0}}
-#define Message_init_zero                        {0, 0, {{NULL}, NULL}, {{NULL}, NULL}}
+#define Message_init_zero                        {0, 0, 0}
 
 /* Field tags (for use in manual encoding/decoding) */
 #define Header_plain_tag                         5
@@ -43,8 +42,7 @@ typedef struct _Message {
 #define Header_device_id_tag                     1
 #define Message_device_id_tag                    1
 #define Message_sequence_tag                     2
-#define Message_name_tag                         3
-#define Message_value_tag                        4
+#define Message_is_system_tag                    3
 
 /* Struct field encoding specification for nanopb */
 #define Header_FIELDLIST(X, a) \
@@ -57,9 +55,8 @@ X(a, STATIC,   ONEOF,    FIXED_LENGTH_BYTES, (encryption,aes_iv,encryption.aes_i
 #define Message_FIELDLIST(X, a) \
 X(a, STATIC,   SINGULAR, UINT64,   device_id,         1) \
 X(a, STATIC,   SINGULAR, UINT32,   sequence,          2) \
-X(a, CALLBACK, SINGULAR, STRING,   name,              3) \
-X(a, CALLBACK, SINGULAR, BYTES,    value,             4)
-#define Message_CALLBACK pb_default_field_callback
+X(a, STATIC,   SINGULAR, BOOL,     is_system,         3)
+#define Message_CALLBACK NULL
 #define Message_DEFAULT NULL
 
 extern const pb_msgdesc_t Header_msg;
@@ -71,7 +68,7 @@ extern const pb_msgdesc_t Message_msg;
 
 /* Maximum encoded size of messages (where known) */
 #define Header_size                              29
-/* Message_size depends on runtime parameters */
+#define Message_size                             19
 
 #ifdef __cplusplus
 } /* extern "C" */

@@ -22,16 +22,6 @@ message Message {
     // Even if device / controller will be sending
     // updates every second - counter will last in about 136 years
     uint32 sequence = 2;
-    
-    // Next 2 fiels basically implements google.protobuf.Any idea:
-    // name (URL) and serialized value.
-    // The reason why it is not used here - it is complicates nanopb.
-
-    // Name must be in format of:
-    //      package_name.message_name
-    // e.g.
-    // openiot.SystemJoinRequest
-    string name = 3;
-    // Serialized bytes of the message
-    bytes value = 4;
+    // ... if followed message is from system.proto
+    bool is_system = 3;
 }
