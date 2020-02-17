@@ -24,25 +24,24 @@ typedef struct _Header {
 } Header;
 
 typedef struct _Message {
-    uint64_t device_id;
     uint32_t sequence;
-    bool is_system;
+    pb_size_t names_count;
+    char names[2][32];
 } Message;
 
 
 /* Initializer values for message structs */
 #define Header_init_default                      {0, 0, {0}}
-#define Message_init_default                     {0, 0, 0}
+#define Message_init_default                     {0, 0, {"", ""}}
 #define Header_init_zero                         {0, 0, {0}}
-#define Message_init_zero                        {0, 0, 0}
+#define Message_init_zero                        {0, 0, {"", ""}}
 
 /* Field tags (for use in manual encoding/decoding) */
 #define Header_plain_tag                         5
 #define Header_aes_iv_tag                        6
 #define Header_device_id_tag                     1
-#define Message_device_id_tag                    1
-#define Message_sequence_tag                     2
-#define Message_is_system_tag                    3
+#define Message_sequence_tag                     1
+#define Message_names_tag                        2
 
 /* Struct field encoding specification for nanopb */
 #define Header_FIELDLIST(X, a) \
@@ -53,9 +52,8 @@ X(a, STATIC,   ONEOF,    FIXED_LENGTH_BYTES, (encryption,aes_iv,encryption.aes_i
 #define Header_DEFAULT NULL
 
 #define Message_FIELDLIST(X, a) \
-X(a, STATIC,   SINGULAR, UINT64,   device_id,         1) \
-X(a, STATIC,   SINGULAR, UINT32,   sequence,          2) \
-X(a, STATIC,   SINGULAR, BOOL,     is_system,         3)
+X(a, STATIC,   SINGULAR, UINT32,   sequence,          1) \
+X(a, STATIC,   REPEATED, STRING,   names,             2)
 #define Message_CALLBACK NULL
 #define Message_DEFAULT NULL
 
@@ -68,7 +66,7 @@ extern const pb_msgdesc_t Message_msg;
 
 /* Maximum encoded size of messages (where known) */
 #define Header_size                              29
-#define Message_size                             19
+#define Message_size                             72
 
 #ifdef __cplusplus
 } /* extern "C" */

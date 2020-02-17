@@ -15,13 +15,11 @@ message Header {
 }
 
 message Message {
-    // The same device id as in unencrypted Header.
-    // Serves mostly to validate successful decryption.
-    uint64 device_id = 1;
     // Auto-incremented sequence number to drop duplicates
-    // Even if device / controller will be sending
-    // updates every second - counter will last in about 136 years
-    uint32 sequence = 2;
-    // ... if followed message is from system.proto
-    bool is_system = 3;
+    // uint32 should last about 136 years even if device / controller
+    // will be sending messages every second
+    uint32 sequence = 1;
+    // Encoded messages followed by this Message
+    // (actual payload)
+    repeated string names = 2;
 }
