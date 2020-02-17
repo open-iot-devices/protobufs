@@ -4,7 +4,4 @@
 * mangle_names: M_STRIP_PACKAGE
 
 # AES_IV is always 16 bytes long so make it inlined
-Header.aes_iv fixed_length: true, max_size: 16
-
-# By default, up to 2 message names with up to 32 chars long
-Message.names max_count: 2, max_size: 32
+Header.aes_cbc fixed_length: true, max_size: 16
