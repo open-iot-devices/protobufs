@@ -20,13 +20,109 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
-// Request to join IoT network from device.
-// controller (server) must be in "accept" mode.
-type SystemJoinRequest struct {
-	// Diffie-Hellman key exchange parameters
+// Diffie-Hellman key exchange
+type KeyExchangeRequest struct {
 	DhP                  uint64   `protobuf:"varint,1,opt,name=dh_p,json=dhP,proto3" json:"dh_p,omitempty"`
 	DhG                  uint64   `protobuf:"varint,2,opt,name=dh_g,json=dhG,proto3" json:"dh_g,omitempty"`
 	DhA                  []uint32 `protobuf:"varint,3,rep,packed,name=dh_a,json=dhA,proto3" json:"dh_a,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *KeyExchangeRequest) Reset()         { *m = KeyExchangeRequest{} }
+func (m *KeyExchangeRequest) String() string { return proto.CompactTextString(m) }
+func (*KeyExchangeRequest) ProtoMessage()    {}
+func (*KeyExchangeRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_477c448daeb2d28d, []int{0}
+}
+
+func (m *KeyExchangeRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_KeyExchangeRequest.Unmarshal(m, b)
+}
+func (m *KeyExchangeRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_KeyExchangeRequest.Marshal(b, m, deterministic)
+}
+func (m *KeyExchangeRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_KeyExchangeRequest.Merge(m, src)
+}
+func (m *KeyExchangeRequest) XXX_Size() int {
+	return xxx_messageInfo_KeyExchangeRequest.Size(m)
+}
+func (m *KeyExchangeRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_KeyExchangeRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_KeyExchangeRequest proto.InternalMessageInfo
+
+func (m *KeyExchangeRequest) GetDhP() uint64 {
+	if m != nil {
+		return m.DhP
+	}
+	return 0
+}
+
+func (m *KeyExchangeRequest) GetDhG() uint64 {
+	if m != nil {
+		return m.DhG
+	}
+	return 0
+}
+
+func (m *KeyExchangeRequest) GetDhA() []uint32 {
+	if m != nil {
+		return m.DhA
+	}
+	return nil
+}
+
+type KeyExchangeResponse struct {
+	DhB                  []uint32 `protobuf:"varint,1,rep,packed,name=dh_b,json=dhB,proto3" json:"dh_b,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *KeyExchangeResponse) Reset()         { *m = KeyExchangeResponse{} }
+func (m *KeyExchangeResponse) String() string { return proto.CompactTextString(m) }
+func (*KeyExchangeResponse) ProtoMessage()    {}
+func (*KeyExchangeResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_477c448daeb2d28d, []int{1}
+}
+
+func (m *KeyExchangeResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_KeyExchangeResponse.Unmarshal(m, b)
+}
+func (m *KeyExchangeResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_KeyExchangeResponse.Marshal(b, m, deterministic)
+}
+func (m *KeyExchangeResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_KeyExchangeResponse.Merge(m, src)
+}
+func (m *KeyExchangeResponse) XXX_Size() int {
+	return xxx_messageInfo_KeyExchangeResponse.Size(m)
+}
+func (m *KeyExchangeResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_KeyExchangeResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_KeyExchangeResponse proto.InternalMessageInfo
+
+func (m *KeyExchangeResponse) GetDhB() []uint32 {
+	if m != nil {
+		return m.DhB
+	}
+	return nil
+}
+
+// Request to join IoT network from device.
+// If device uses encryption it must initiate key exchange
+// prior to joining.
+type SystemJoinRequest struct {
+	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Manufacturer         string   `protobuf:"bytes,2,opt,name=manufacturer,proto3" json:"manufacturer,omitempty"`
+	ProductUrl           string   `protobuf:"bytes,3,opt,name=product_url,json=productUrl,proto3" json:"product_url,omitempty"`
+	ProtobufUrl          string   `protobuf:"bytes,4,opt,name=protobuf_url,json=protobufUrl,proto3" json:"protobuf_url,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -36,7 +132,7 @@ func (m *SystemJoinRequest) Reset()         { *m = SystemJoinRequest{} }
 func (m *SystemJoinRequest) String() string { return proto.CompactTextString(m) }
 func (*SystemJoinRequest) ProtoMessage()    {}
 func (*SystemJoinRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_477c448daeb2d28d, []int{0}
+	return fileDescriptor_477c448daeb2d28d, []int{2}
 }
 
 func (m *SystemJoinRequest) XXX_Unmarshal(b []byte) error {
@@ -57,31 +153,40 @@ func (m *SystemJoinRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_SystemJoinRequest proto.InternalMessageInfo
 
-func (m *SystemJoinRequest) GetDhP() uint64 {
+func (m *SystemJoinRequest) GetName() string {
 	if m != nil {
-		return m.DhP
+		return m.Name
 	}
-	return 0
+	return ""
 }
 
-func (m *SystemJoinRequest) GetDhG() uint64 {
+func (m *SystemJoinRequest) GetManufacturer() string {
 	if m != nil {
-		return m.DhG
+		return m.Manufacturer
 	}
-	return 0
+	return ""
 }
 
-func (m *SystemJoinRequest) GetDhA() []uint32 {
+func (m *SystemJoinRequest) GetProductUrl() string {
 	if m != nil {
-		return m.DhA
+		return m.ProductUrl
 	}
-	return nil
+	return ""
+}
+
+func (m *SystemJoinRequest) GetProtobufUrl() string {
+	if m != nil {
+		return m.ProtobufUrl
+	}
+	return ""
 }
 
 // Controller (server) response to JoinRequest
 type SystemJoinResponse struct {
-	// Diffie-Hellman key exchange parameters
-	DhB                  []uint32 `protobuf:"varint,1,rep,packed,name=dh_b,json=dhB,proto3" json:"dh_b,omitempty"`
+	// Server's name
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// Server's timestamp
+	Timestamp            uint32   `protobuf:"varint,2,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -91,7 +196,7 @@ func (m *SystemJoinResponse) Reset()         { *m = SystemJoinResponse{} }
 func (m *SystemJoinResponse) String() string { return proto.CompactTextString(m) }
 func (*SystemJoinResponse) ProtoMessage()    {}
 func (*SystemJoinResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_477c448daeb2d28d, []int{1}
+	return fileDescriptor_477c448daeb2d28d, []int{3}
 }
 
 func (m *SystemJoinResponse) XXX_Unmarshal(b []byte) error {
@@ -112,11 +217,18 @@ func (m *SystemJoinResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_SystemJoinResponse proto.InternalMessageInfo
 
-func (m *SystemJoinResponse) GetDhB() []uint32 {
+func (m *SystemJoinResponse) GetName() string {
 	if m != nil {
-		return m.DhB
+		return m.Name
 	}
-	return nil
+	return ""
+}
+
+func (m *SystemJoinResponse) GetTimestamp() uint32 {
+	if m != nil {
+		return m.Timestamp
+	}
+	return 0
 }
 
 // Deveice request to leave IoT network
@@ -131,7 +243,7 @@ func (m *SystemLeaveRequest) Reset()         { *m = SystemLeaveRequest{} }
 func (m *SystemLeaveRequest) String() string { return proto.CompactTextString(m) }
 func (*SystemLeaveRequest) ProtoMessage()    {}
 func (*SystemLeaveRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_477c448daeb2d28d, []int{2}
+	return fileDescriptor_477c448daeb2d28d, []int{4}
 }
 
 func (m *SystemLeaveRequest) XXX_Unmarshal(b []byte) error {
@@ -170,7 +282,7 @@ func (m *SystemLeaveResponse) Reset()         { *m = SystemLeaveResponse{} }
 func (m *SystemLeaveResponse) String() string { return proto.CompactTextString(m) }
 func (*SystemLeaveResponse) ProtoMessage()    {}
 func (*SystemLeaveResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_477c448daeb2d28d, []int{3}
+	return fileDescriptor_477c448daeb2d28d, []int{5}
 }
 
 func (m *SystemLeaveResponse) XXX_Unmarshal(b []byte) error {
@@ -191,130 +303,35 @@ func (m *SystemLeaveResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_SystemLeaveResponse proto.InternalMessageInfo
 
-// Controller to device request for addition information
-type SystemDeviceInfoRequest struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *SystemDeviceInfoRequest) Reset()         { *m = SystemDeviceInfoRequest{} }
-func (m *SystemDeviceInfoRequest) String() string { return proto.CompactTextString(m) }
-func (*SystemDeviceInfoRequest) ProtoMessage()    {}
-func (*SystemDeviceInfoRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_477c448daeb2d28d, []int{4}
-}
-
-func (m *SystemDeviceInfoRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_SystemDeviceInfoRequest.Unmarshal(m, b)
-}
-func (m *SystemDeviceInfoRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_SystemDeviceInfoRequest.Marshal(b, m, deterministic)
-}
-func (m *SystemDeviceInfoRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SystemDeviceInfoRequest.Merge(m, src)
-}
-func (m *SystemDeviceInfoRequest) XXX_Size() int {
-	return xxx_messageInfo_SystemDeviceInfoRequest.Size(m)
-}
-func (m *SystemDeviceInfoRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_SystemDeviceInfoRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_SystemDeviceInfoRequest proto.InternalMessageInfo
-
-// Device information. In response to controller's request
-type SystemDeviceInfoResponse struct {
-	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Manufacturer         string   `protobuf:"bytes,2,opt,name=manufacturer,proto3" json:"manufacturer,omitempty"`
-	ProductUrl           string   `protobuf:"bytes,3,opt,name=product_url,json=productUrl,proto3" json:"product_url,omitempty"`
-	ProtobufUrl          string   `protobuf:"bytes,4,opt,name=protobuf_url,json=protobufUrl,proto3" json:"protobuf_url,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *SystemDeviceInfoResponse) Reset()         { *m = SystemDeviceInfoResponse{} }
-func (m *SystemDeviceInfoResponse) String() string { return proto.CompactTextString(m) }
-func (*SystemDeviceInfoResponse) ProtoMessage()    {}
-func (*SystemDeviceInfoResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_477c448daeb2d28d, []int{5}
-}
-
-func (m *SystemDeviceInfoResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_SystemDeviceInfoResponse.Unmarshal(m, b)
-}
-func (m *SystemDeviceInfoResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_SystemDeviceInfoResponse.Marshal(b, m, deterministic)
-}
-func (m *SystemDeviceInfoResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SystemDeviceInfoResponse.Merge(m, src)
-}
-func (m *SystemDeviceInfoResponse) XXX_Size() int {
-	return xxx_messageInfo_SystemDeviceInfoResponse.Size(m)
-}
-func (m *SystemDeviceInfoResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_SystemDeviceInfoResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_SystemDeviceInfoResponse proto.InternalMessageInfo
-
-func (m *SystemDeviceInfoResponse) GetName() string {
-	if m != nil {
-		return m.Name
-	}
-	return ""
-}
-
-func (m *SystemDeviceInfoResponse) GetManufacturer() string {
-	if m != nil {
-		return m.Manufacturer
-	}
-	return ""
-}
-
-func (m *SystemDeviceInfoResponse) GetProductUrl() string {
-	if m != nil {
-		return m.ProductUrl
-	}
-	return ""
-}
-
-func (m *SystemDeviceInfoResponse) GetProtobufUrl() string {
-	if m != nil {
-		return m.ProtobufUrl
-	}
-	return ""
-}
-
 func init() {
+	proto.RegisterType((*KeyExchangeRequest)(nil), "openiot.KeyExchangeRequest")
+	proto.RegisterType((*KeyExchangeResponse)(nil), "openiot.KeyExchangeResponse")
 	proto.RegisterType((*SystemJoinRequest)(nil), "openiot.SystemJoinRequest")
 	proto.RegisterType((*SystemJoinResponse)(nil), "openiot.SystemJoinResponse")
 	proto.RegisterType((*SystemLeaveRequest)(nil), "openiot.SystemLeaveRequest")
 	proto.RegisterType((*SystemLeaveResponse)(nil), "openiot.SystemLeaveResponse")
-	proto.RegisterType((*SystemDeviceInfoRequest)(nil), "openiot.SystemDeviceInfoRequest")
-	proto.RegisterType((*SystemDeviceInfoResponse)(nil), "openiot.SystemDeviceInfoResponse")
 }
 
 func init() { proto.RegisterFile("openiot/system.proto", fileDescriptor_477c448daeb2d28d) }
 
 var fileDescriptor_477c448daeb2d28d = []byte{
-	// 260 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x64, 0x90, 0x4d, 0x4b, 0x03, 0x31,
-	0x10, 0x86, 0x59, 0x77, 0xa9, 0x74, 0x5a, 0x0f, 0x8d, 0x5f, 0xf1, 0x64, 0xcd, 0xc5, 0x1e, 0x44,
-	0x0f, 0xfe, 0x02, 0x45, 0x10, 0xa5, 0x07, 0x59, 0xe9, 0xb9, 0x64, 0x77, 0x67, 0xed, 0xc2, 0x6e,
-	0x12, 0xf3, 0x51, 0xf0, 0x8f, 0xf8, 0x7b, 0xc5, 0x74, 0x02, 0x16, 0x6f, 0x99, 0x67, 0x1e, 0xde,
-	0x37, 0x09, 0x9c, 0x68, 0x83, 0xaa, 0xd3, 0xfe, 0xce, 0x7d, 0x39, 0x8f, 0xc3, 0xad, 0xb1, 0xda,
-	0x6b, 0x76, 0x48, 0x54, 0x2c, 0x61, 0xf6, 0x1e, 0x17, 0xaf, 0xba, 0x53, 0x25, 0x7e, 0x06, 0x74,
-	0x9e, 0xcd, 0xa0, 0x68, 0x36, 0x6b, 0xc3, 0xb3, 0x79, 0xb6, 0x28, 0xca, 0xbc, 0xd9, 0xbc, 0x11,
-	0xfa, 0xe0, 0x07, 0x09, 0x3d, 0x13, 0x92, 0x3c, 0x9f, 0xe7, 0x8b, 0xa3, 0x5f, 0xf4, 0x20, 0xae,
-	0x81, 0xfd, 0x4d, 0x73, 0x46, 0x2b, 0x87, 0x24, 0x56, 0x3c, 0x4b, 0xe2, 0xa3, 0xb8, 0x49, 0xe2,
-	0x12, 0xe5, 0x16, 0x53, 0xef, 0x19, 0x8c, 0x2c, 0x4a, 0xa7, 0x55, 0x6c, 0x1e, 0x97, 0x34, 0x89,
-	0x53, 0x38, 0xde, 0xb3, 0x77, 0xb9, 0xe2, 0x02, 0xce, 0x77, 0xf8, 0x09, 0xb7, 0x5d, 0x8d, 0x2f,
-	0xaa, 0xd5, 0x94, 0x24, 0xbe, 0x33, 0xe0, 0xff, 0x77, 0x74, 0x1f, 0x06, 0x85, 0x92, 0x03, 0x52,
-	0x49, 0x3c, 0x33, 0x01, 0xd3, 0x41, 0xaa, 0xd0, 0xca, 0xda, 0x07, 0x8b, 0x36, 0xbe, 0x73, 0x5c,
-	0xee, 0x31, 0x76, 0x09, 0x13, 0x63, 0x75, 0x13, 0x6a, 0xbf, 0x0e, 0xb6, 0xe7, 0x79, 0x54, 0x80,
-	0xd0, 0xca, 0xf6, 0xec, 0x0a, 0xa6, 0xf1, 0x7b, 0xab, 0xd0, 0x46, 0xa3, 0x88, 0xc6, 0x24, 0xb1,
-	0x95, 0xed, 0xab, 0x51, 0x1c, 0xee, 0x7f, 0x02, 0x00, 0x00, 0xff, 0xff, 0x22, 0xf8, 0x13, 0x26,
-	0x97, 0x01, 0x00, 0x00,
+	// 276 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x6c, 0x90, 0xdd, 0x4a, 0xc3, 0x30,
+	0x14, 0x80, 0xa9, 0x2d, 0x93, 0x9d, 0x6d, 0x17, 0xcb, 0x54, 0x7a, 0x21, 0x38, 0x73, 0xd5, 0x0b,
+	0xd1, 0x0b, 0x9f, 0x40, 0x41, 0x05, 0x7f, 0x40, 0x2a, 0xbb, 0x1e, 0x69, 0x7b, 0xb6, 0x16, 0xda,
+	0x24, 0xe6, 0x47, 0xdc, 0x53, 0xf8, 0xca, 0xe2, 0x31, 0x55, 0x0b, 0xde, 0x25, 0x1f, 0x1f, 0xe7,
+	0x7c, 0x09, 0x1c, 0x28, 0x8d, 0xb2, 0x51, 0xee, 0xc2, 0xee, 0xac, 0xc3, 0xee, 0x5c, 0x1b, 0xe5,
+	0x14, 0xdb, 0x0f, 0x94, 0x3f, 0x01, 0x7b, 0xc0, 0xdd, 0xcd, 0x7b, 0x59, 0x0b, 0xb9, 0xc5, 0x1c,
+	0x5f, 0x3d, 0x5a, 0xc7, 0xe6, 0x90, 0x54, 0xf5, 0x5a, 0xa7, 0xd1, 0x32, 0xca, 0x92, 0x3c, 0xae,
+	0xea, 0xe7, 0x80, 0xb6, 0xe9, 0x5e, 0x8f, 0xee, 0x02, 0x12, 0x69, 0xbc, 0x8c, 0xb3, 0xd9, 0x17,
+	0xba, 0xe2, 0x19, 0x2c, 0x06, 0xe3, 0xac, 0x56, 0xd2, 0x62, 0x30, 0x8b, 0x34, 0xea, 0xcd, 0x6b,
+	0xfe, 0x11, 0xc1, 0xfc, 0x85, 0x92, 0xee, 0x55, 0x23, 0xfb, 0xc5, 0x0c, 0x12, 0x29, 0x3a, 0xa4,
+	0xc5, 0xe3, 0x9c, 0xce, 0x8c, 0xc3, 0xb4, 0x13, 0xd2, 0x6f, 0x44, 0xe9, 0xbc, 0x41, 0x43, 0x05,
+	0xe3, 0x7c, 0xc0, 0xd8, 0x09, 0x4c, 0xb4, 0x51, 0x95, 0x2f, 0xdd, 0xda, 0x9b, 0x36, 0x8d, 0x49,
+	0x81, 0x80, 0x56, 0xa6, 0x65, 0xa7, 0x30, 0xa5, 0x97, 0x17, 0x7e, 0x43, 0x46, 0x42, 0xc6, 0xa4,
+	0x67, 0x2b, 0xd3, 0xf2, 0x5b, 0x60, 0x7f, 0x83, 0x42, 0xfa, 0x7f, 0x45, 0xc7, 0x30, 0x76, 0x4d,
+	0x87, 0xd6, 0x89, 0x4e, 0x53, 0xce, 0x2c, 0xff, 0x05, 0xfc, 0xac, 0x9f, 0xf3, 0x88, 0xe2, 0xed,
+	0xe7, 0x4b, 0x8f, 0x60, 0x64, 0x50, 0x58, 0x25, 0xc3, 0xa4, 0x70, 0xe3, 0x87, 0xb0, 0x18, 0xd8,
+	0xdf, 0x6b, 0x8b, 0x11, 0x95, 0x5d, 0x7e, 0x06, 0x00, 0x00, 0xff, 0xff, 0x24, 0x4d, 0x65, 0xc0,
+	0xbf, 0x01, 0x00, 0x00,
 }

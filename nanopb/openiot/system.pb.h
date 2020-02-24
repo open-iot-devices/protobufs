@@ -14,16 +14,12 @@ extern "C" {
 #endif
 
 /* Struct definitions */
-typedef struct _SystemDeviceInfoRequest {
-    char dummy_field;
-} SystemDeviceInfoRequest;
-
-typedef struct _SystemDeviceInfoResponse {
+typedef struct _SystemJoinRequest {
     pb_callback_t name;
     pb_callback_t manufacturer;
     pb_callback_t product_url;
     pb_callback_t protobuf_url;
-} SystemDeviceInfoResponse;
+} SystemJoinRequest;
 
 typedef struct _SystemLeaveRequest {
     pb_callback_t reason;
@@ -33,55 +29,76 @@ typedef struct _SystemLeaveResponse {
     char dummy_field;
 } SystemLeaveResponse;
 
-typedef struct _SystemJoinRequest {
+typedef struct _KeyExchangeRequest {
     uint64_t dh_p;
     uint64_t dh_g;
     pb_size_t dh_a_count;
     uint32_t dh_a[16];
-} SystemJoinRequest;
+} KeyExchangeRequest;
 
-typedef struct _SystemJoinResponse {
+typedef struct _KeyExchangeResponse {
     pb_size_t dh_b_count;
     uint32_t dh_b[16];
+} KeyExchangeResponse;
+
+typedef struct _SystemJoinResponse {
+    pb_callback_t name;
+    uint32_t timestamp;
 } SystemJoinResponse;
 
 
 /* Initializer values for message structs */
-#define SystemJoinRequest_init_default           {0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
-#define SystemJoinResponse_init_default          {0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
+#define KeyExchangeRequest_init_default          {0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
+#define KeyExchangeResponse_init_default         {0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
+#define SystemJoinRequest_init_default           {{{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}}
+#define SystemJoinResponse_init_default          {{{NULL}, NULL}, 0}
 #define SystemLeaveRequest_init_default          {{{NULL}, NULL}}
 #define SystemLeaveResponse_init_default         {0}
-#define SystemDeviceInfoRequest_init_default     {0}
-#define SystemDeviceInfoResponse_init_default    {{{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}}
-#define SystemJoinRequest_init_zero              {0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
-#define SystemJoinResponse_init_zero             {0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
+#define KeyExchangeRequest_init_zero             {0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
+#define KeyExchangeResponse_init_zero            {0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
+#define SystemJoinRequest_init_zero              {{{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}}
+#define SystemJoinResponse_init_zero             {{{NULL}, NULL}, 0}
 #define SystemLeaveRequest_init_zero             {{{NULL}, NULL}}
 #define SystemLeaveResponse_init_zero            {0}
-#define SystemDeviceInfoRequest_init_zero        {0}
-#define SystemDeviceInfoResponse_init_zero       {{{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}}
 
 /* Field tags (for use in manual encoding/decoding) */
-#define SystemDeviceInfoResponse_name_tag        1
-#define SystemDeviceInfoResponse_manufacturer_tag 2
-#define SystemDeviceInfoResponse_product_url_tag 3
-#define SystemDeviceInfoResponse_protobuf_url_tag 4
+#define SystemJoinRequest_name_tag               1
+#define SystemJoinRequest_manufacturer_tag       2
+#define SystemJoinRequest_product_url_tag        3
+#define SystemJoinRequest_protobuf_url_tag       4
 #define SystemLeaveRequest_reason_tag            1
-#define SystemJoinRequest_dh_p_tag               1
-#define SystemJoinRequest_dh_g_tag               2
-#define SystemJoinRequest_dh_a_tag               3
-#define SystemJoinResponse_dh_b_tag              1
+#define KeyExchangeRequest_dh_p_tag              1
+#define KeyExchangeRequest_dh_g_tag              2
+#define KeyExchangeRequest_dh_a_tag              3
+#define KeyExchangeResponse_dh_b_tag             1
+#define SystemJoinResponse_name_tag              1
+#define SystemJoinResponse_timestamp_tag         2
 
 /* Struct field encoding specification for nanopb */
-#define SystemJoinRequest_FIELDLIST(X, a) \
+#define KeyExchangeRequest_FIELDLIST(X, a) \
 X(a, STATIC,   SINGULAR, UINT64,   dh_p,              1) \
 X(a, STATIC,   SINGULAR, UINT64,   dh_g,              2) \
 X(a, STATIC,   REPEATED, UINT32,   dh_a,              3)
-#define SystemJoinRequest_CALLBACK NULL
+#define KeyExchangeRequest_CALLBACK NULL
+#define KeyExchangeRequest_DEFAULT NULL
+
+#define KeyExchangeResponse_FIELDLIST(X, a) \
+X(a, STATIC,   REPEATED, UINT32,   dh_b,              1)
+#define KeyExchangeResponse_CALLBACK NULL
+#define KeyExchangeResponse_DEFAULT NULL
+
+#define SystemJoinRequest_FIELDLIST(X, a) \
+X(a, CALLBACK, SINGULAR, STRING,   name,              1) \
+X(a, CALLBACK, SINGULAR, STRING,   manufacturer,      2) \
+X(a, CALLBACK, SINGULAR, STRING,   product_url,       3) \
+X(a, CALLBACK, SINGULAR, STRING,   protobuf_url,      4)
+#define SystemJoinRequest_CALLBACK pb_default_field_callback
 #define SystemJoinRequest_DEFAULT NULL
 
 #define SystemJoinResponse_FIELDLIST(X, a) \
-X(a, STATIC,   REPEATED, UINT32,   dh_b,              1)
-#define SystemJoinResponse_CALLBACK NULL
+X(a, CALLBACK, SINGULAR, STRING,   name,              1) \
+X(a, STATIC,   SINGULAR, UINT32,   timestamp,         2)
+#define SystemJoinResponse_CALLBACK pb_default_field_callback
 #define SystemJoinResponse_DEFAULT NULL
 
 #define SystemLeaveRequest_FIELDLIST(X, a) \
@@ -94,41 +111,28 @@ X(a, CALLBACK, SINGULAR, STRING,   reason,            1)
 #define SystemLeaveResponse_CALLBACK NULL
 #define SystemLeaveResponse_DEFAULT NULL
 
-#define SystemDeviceInfoRequest_FIELDLIST(X, a) \
-
-#define SystemDeviceInfoRequest_CALLBACK NULL
-#define SystemDeviceInfoRequest_DEFAULT NULL
-
-#define SystemDeviceInfoResponse_FIELDLIST(X, a) \
-X(a, CALLBACK, SINGULAR, STRING,   name,              1) \
-X(a, CALLBACK, SINGULAR, STRING,   manufacturer,      2) \
-X(a, CALLBACK, SINGULAR, STRING,   product_url,       3) \
-X(a, CALLBACK, SINGULAR, STRING,   protobuf_url,      4)
-#define SystemDeviceInfoResponse_CALLBACK pb_default_field_callback
-#define SystemDeviceInfoResponse_DEFAULT NULL
-
+extern const pb_msgdesc_t KeyExchangeRequest_msg;
+extern const pb_msgdesc_t KeyExchangeResponse_msg;
 extern const pb_msgdesc_t SystemJoinRequest_msg;
 extern const pb_msgdesc_t SystemJoinResponse_msg;
 extern const pb_msgdesc_t SystemLeaveRequest_msg;
 extern const pb_msgdesc_t SystemLeaveResponse_msg;
-extern const pb_msgdesc_t SystemDeviceInfoRequest_msg;
-extern const pb_msgdesc_t SystemDeviceInfoResponse_msg;
 
 /* Defines for backwards compatibility with code written before nanopb-0.4.0 */
+#define KeyExchangeRequest_fields &KeyExchangeRequest_msg
+#define KeyExchangeResponse_fields &KeyExchangeResponse_msg
 #define SystemJoinRequest_fields &SystemJoinRequest_msg
 #define SystemJoinResponse_fields &SystemJoinResponse_msg
 #define SystemLeaveRequest_fields &SystemLeaveRequest_msg
 #define SystemLeaveResponse_fields &SystemLeaveResponse_msg
-#define SystemDeviceInfoRequest_fields &SystemDeviceInfoRequest_msg
-#define SystemDeviceInfoResponse_fields &SystemDeviceInfoResponse_msg
 
 /* Maximum encoded size of messages (where known) */
-#define SystemJoinRequest_size                   118
-#define SystemJoinResponse_size                  96
+#define KeyExchangeRequest_size                  118
+#define KeyExchangeResponse_size                 96
+/* SystemJoinRequest_size depends on runtime parameters */
+/* SystemJoinResponse_size depends on runtime parameters */
 /* SystemLeaveRequest_size depends on runtime parameters */
 #define SystemLeaveResponse_size                 0
-#define SystemDeviceInfoRequest_size             0
-/* SystemDeviceInfoResponse_size depends on runtime parameters */
 
 #ifdef __cplusplus
 } /* extern "C" */

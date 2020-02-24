@@ -6,6 +6,12 @@
 #error Regenerate this file with the current version of nanopb generator.
 #endif
 
+PB_BIND(KeyExchangeRequest, KeyExchangeRequest, AUTO)
+
+
+PB_BIND(KeyExchangeResponse, KeyExchangeResponse, AUTO)
+
+
 PB_BIND(SystemJoinRequest, SystemJoinRequest, AUTO)
 
 
@@ -16,12 +22,6 @@ PB_BIND(SystemLeaveRequest, SystemLeaveRequest, AUTO)
 
 
 PB_BIND(SystemLeaveResponse, SystemLeaveResponse, AUTO)
-
-
-PB_BIND(SystemDeviceInfoRequest, SystemDeviceInfoRequest, AUTO)
-
-
-PB_BIND(SystemDeviceInfoResponse, SystemDeviceInfoResponse, AUTO)
 
 
 

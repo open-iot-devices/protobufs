@@ -6,6 +6,8 @@ message Header {
     // Unique (at least at given local network) device ID. It must always
     // be un-encrypted to allow device/controller find decryption key.
     uint64 device_id = 1;
+    // CRC of all followed unencrypted data.
+    uint32 crc = 2;
     // Encryption type of followed messages
     oneof encryption {
         bool plain = 5;
@@ -19,8 +21,4 @@ message Message {
     // uint32 should last about 136 years even if device / controller
     // will be sending messages every second
     uint32 sequence = 1;
-    // CRC of followed message
-    uint32 crc = 2;
-    // Type of followed message
-    uint32 message_type = 3;
 }

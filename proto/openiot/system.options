@@ -4,5 +4,5 @@
 * mangle_names: M_STRIP_PACKAGE
 
 # Diffie-Hellman arrays are the same length as AES_KEY -> 16
-SystemJoinRequest.dh_a max_count: 16
-SystemJoinResponse.dh_b max_count: 16
+KeyExchangeRequest.dh_a max_count: 16
+KeyExchangeResponse.dh_b max_count: 16

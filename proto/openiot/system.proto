@@ -2,19 +2,33 @@
 syntax = "proto3";
 package openiot;
 
-// Request to join IoT network from device.
-// controller (server) must be in "accept" mode.
-message SystemJoinRequest {
-    // Diffie-Hellman key exchange parameters
+// Diffie-Hellman key exchange
+message KeyExchangeRequest {
     uint64 dh_p = 1;   // modulus
     uint64 dh_g = 2;   // base
     repeated uint32 dh_a = 3;  // "public" key of device
 }
 
+message KeyExchangeResponse {
+    repeated uint32 dh_b = 1;  // "public" key of controller
+}
+
+// Request to join IoT network from device.
+// If device uses encryption it must initiate key exchange
+// prior to joining.
+message SystemJoinRequest {
+    string name = 1;
+    string manufacturer = 2;
+    string product_url = 3;
+    string protobuf_url = 4;
+}
+
 // Controller (server) response to JoinRequest
 message SystemJoinResponse {
-    // Diffie-Hellman key exchange parameters
-    repeated uint32 dh_b = 1;  // "public" key of controller
+    // Server's name
+    string name = 1;
+    // Server's timestamp
+    uint32 timestamp = 2;
 }
 
 // Deveice request to leave IoT network
@@ -25,17 +39,4 @@ message SystemLeaveRequest {
 // Controller response to leave network request
 message SystemLeaveResponse {
     // Just confirmation from controller
-}
-
-// Controller to device request for addition information
-message SystemDeviceInfoRequest {
-    // Nothing, always request all information
-}
-
-// Device information. In response to controller's request
-message SystemDeviceInfoResponse {
-    string name = 1;
-    string manufacturer = 2;
-    string product_url = 3;
-    string protobuf_url = 4;
 }

@@ -16,6 +16,7 @@ extern "C" {
 /* Struct definitions */
 typedef struct _Header {
     uint64_t device_id;
+    uint32_t crc;
     pb_size_t which_encryption;
     union {
         bool plain;
@@ -26,29 +27,27 @@ typedef struct _Header {
 
 typedef struct _Message {
     uint32_t sequence;
-    uint32_t crc;
-    uint32_t message_type;
 } Message;
 
 
 /* Initializer values for message structs */
-#define Header_init_default                      {0, 0, {0}}
-#define Message_init_default                     {0, 0, 0}
-#define Header_init_zero                         {0, 0, {0}}
-#define Message_init_zero                        {0, 0, 0}
+#define Header_init_default                      {0, 0, 0, {0}}
+#define Message_init_default                     {0}
+#define Header_init_zero                         {0, 0, 0, {0}}
+#define Message_init_zero                        {0}
 
 /* Field tags (for use in manual encoding/decoding) */
 #define Header_plain_tag                         5
 #define Header_aes_ecb_tag                       6
 #define Header_aes_cbc_tag                       7
 #define Header_device_id_tag                     1
+#define Header_crc_tag                           2
 #define Message_sequence_tag                     1
-#define Message_crc_tag                          2
-#define Message_message_type_tag                 3
 
 /* Struct field encoding specification for nanopb */
 #define Header_FIELDLIST(X, a) \
 X(a, STATIC,   SINGULAR, UINT64,   device_id,         1) \
+X(a, STATIC,   SINGULAR, UINT32,   crc,               2) \
 X(a, STATIC,   ONEOF,    BOOL,     (encryption,plain,encryption.plain),   5) \
 X(a, STATIC,   ONEOF,    BOOL,     (encryption,aes_ecb,encryption.aes_ecb),   6) \
 X(a, STATIC,   ONEOF,    FIXED_LENGTH_BYTES, (encryption,aes_cbc,encryption.aes_cbc),   7)
@@ -56,9 +55,7 @@ X(a, STATIC,   ONEOF,    FIXED_LENGTH_BYTES, (encryption,aes_cbc,encryption.aes_
 #define Header_DEFAULT NULL
 
 #define Message_FIELDLIST(X, a) \
-X(a, STATIC,   SINGULAR, UINT32,   sequence,          1) \
-X(a, STATIC,   SINGULAR, UINT32,   crc,               2) \
-X(a, STATIC,   SINGULAR, UINT32,   message_type,      3)
+X(a, STATIC,   SINGULAR, UINT32,   sequence,          1)
 #define Message_CALLBACK NULL
 #define Message_DEFAULT NULL
 
@@ -70,8 +67,8 @@ extern const pb_msgdesc_t Message_msg;
 #define Message_fields &Message_msg
 
 /* Maximum encoded size of messages (where known) */
-#define Header_size                              29
-#define Message_size                             18
+#define Header_size                              35
+#define Message_size                             6
 
 #ifdef __cplusplus
 } /* extern "C" */
