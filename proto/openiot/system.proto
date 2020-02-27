@@ -2,28 +2,56 @@
 syntax = "proto3";
 package openiot;
 
-// Diffie-Hellman key exchange
+enum EncryptionType {
+    PLAIN = 0;
+    AES_ECB = 1;
+}
+
+// Always unencrypted message header
+// to be able to find decryption key by device id.
+message Header {
+    // Unique (at least within network) device ID.
+    uint64 device_id = 1;
+    // CRC of message data before encryption (if desired).
+    uint32 crc = 2;
+    // Indicates that message contains key exchange request / response
+    bool key_exchange = 3;
+}
+
+// A message followed by Header and describes common
+// parameters for all device / controller messages.
+message MessageInfo {
+    // Auto-incremented sequence number to drop duplicates
+    // uint32 should last about 136 years even if device / controller
+    // will be sending messages every second
+    uint32 sequence = 1;
+}
+
+// Diffie-Hellman key exchange: device to controller.
 message KeyExchangeRequest {
     uint64 dh_p = 1;   // modulus
     uint64 dh_g = 2;   // base
     repeated uint32 dh_a = 3;  // "public" key of device
 }
 
+// Diffie-Hellman key exchange: controller to device.
 message KeyExchangeResponse {
     repeated uint32 dh_b = 1;  // "public" key of controller
 }
 
 // Request to join IoT network from device.
 // If device uses encryption it must initiate key exchange
-// prior to joining.
+// prior to join.
 message SystemJoinRequest {
     string name = 1;
     string manufacturer = 2;
     string product_url = 3;
     string protobuf_url = 4;
+
+    EncryptionType encryption_type = 5;
 }
 
-// Controller (server) response to JoinRequest
+// Request to join response from controller to device.
 message SystemJoinResponse {
     // Server's name
     string name = 1;

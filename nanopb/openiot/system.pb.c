@@ -6,6 +6,12 @@
 #error Regenerate this file with the current version of nanopb generator.
 #endif
 
+PB_BIND(Header, Header, AUTO)
+
+
+PB_BIND(MessageInfo, MessageInfo, AUTO)
+
+
 PB_BIND(KeyExchangeRequest, KeyExchangeRequest, AUTO)
 
 

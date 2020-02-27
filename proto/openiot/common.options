@@ -1,7 +1,0 @@
-## nanopb specific options ##
-
-# Do not include package name
-* mangle_names: M_STRIP_PACKAGE
-
-# AES_IV is always 16 bytes long so make it inlined
-Header.aes_cbc fixed_length: true, max_size: 16

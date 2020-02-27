@@ -29,6 +29,12 @@ typedef struct _SystemLeaveResponse {
     char dummy_field;
 } SystemLeaveResponse;
 
+typedef struct _Header {
+    uint64_t device_id;
+    uint32_t crc;
+    bool key_exchange;
+} Header;
+
 typedef struct _KeyExchangeRequest {
     uint64_t dh_p;
     uint64_t dh_g;
@@ -41,6 +47,10 @@ typedef struct _KeyExchangeResponse {
     uint32_t dh_b[16];
 } KeyExchangeResponse;
 
+typedef struct _MessageInfo {
+    uint32_t sequence;
+} MessageInfo;
+
 typedef struct _SystemJoinResponse {
     pb_callback_t name;
     uint32_t timestamp;
@@ -48,12 +58,16 @@ typedef struct _SystemJoinResponse {
 
 
 /* Initializer values for message structs */
+#define Header_init_default                      {0, 0, 0}
+#define MessageInfo_init_default                 {0}
 #define KeyExchangeRequest_init_default          {0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
 #define KeyExchangeResponse_init_default         {0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
 #define SystemJoinRequest_init_default           {{{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}}
 #define SystemJoinResponse_init_default          {{{NULL}, NULL}, 0}
 #define SystemLeaveRequest_init_default          {{{NULL}, NULL}}
 #define SystemLeaveResponse_init_default         {0}
+#define Header_init_zero                         {0, 0, 0}
+#define MessageInfo_init_zero                    {0}
 #define KeyExchangeRequest_init_zero             {0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
 #define KeyExchangeResponse_init_zero            {0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
 #define SystemJoinRequest_init_zero              {{{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}}
@@ -67,14 +81,30 @@ typedef struct _SystemJoinResponse {
 #define SystemJoinRequest_product_url_tag        3
 #define SystemJoinRequest_protobuf_url_tag       4
 #define SystemLeaveRequest_reason_tag            1
+#define Header_device_id_tag                     1
+#define Header_crc_tag                           2
+#define Header_key_exchange_tag                  3
 #define KeyExchangeRequest_dh_p_tag              1
 #define KeyExchangeRequest_dh_g_tag              2
 #define KeyExchangeRequest_dh_a_tag              3
 #define KeyExchangeResponse_dh_b_tag             1
+#define MessageInfo_sequence_tag                 1
 #define SystemJoinResponse_name_tag              1
 #define SystemJoinResponse_timestamp_tag         2
 
 /* Struct field encoding specification for nanopb */
+#define Header_FIELDLIST(X, a) \
+X(a, STATIC,   SINGULAR, UINT64,   device_id,         1) \
+X(a, STATIC,   SINGULAR, UINT32,   crc,               2) \
+X(a, STATIC,   SINGULAR, BOOL,     key_exchange,      3)
+#define Header_CALLBACK NULL
+#define Header_DEFAULT NULL
+
+#define MessageInfo_FIELDLIST(X, a) \
+X(a, STATIC,   SINGULAR, UINT32,   sequence,          1)
+#define MessageInfo_CALLBACK NULL
+#define MessageInfo_DEFAULT NULL
+
 #define KeyExchangeRequest_FIELDLIST(X, a) \
 X(a, STATIC,   SINGULAR, UINT64,   dh_p,              1) \
 X(a, STATIC,   SINGULAR, UINT64,   dh_g,              2) \
@@ -111,6 +141,8 @@ X(a, CALLBACK, SINGULAR, STRING,   reason,            1)
 #define SystemLeaveResponse_CALLBACK NULL
 #define SystemLeaveResponse_DEFAULT NULL
 
+extern const pb_msgdesc_t Header_msg;
+extern const pb_msgdesc_t MessageInfo_msg;
 extern const pb_msgdesc_t KeyExchangeRequest_msg;
 extern const pb_msgdesc_t KeyExchangeResponse_msg;
 extern const pb_msgdesc_t SystemJoinRequest_msg;
@@ -119,6 +151,8 @@ extern const pb_msgdesc_t SystemLeaveRequest_msg;
 extern const pb_msgdesc_t SystemLeaveResponse_msg;
 
 /* Defines for backwards compatibility with code written before nanopb-0.4.0 */
+#define Header_fields &Header_msg
+#define MessageInfo_fields &MessageInfo_msg
 #define KeyExchangeRequest_fields &KeyExchangeRequest_msg
 #define KeyExchangeResponse_fields &KeyExchangeResponse_msg
 #define SystemJoinRequest_fields &SystemJoinRequest_msg
@@ -127,6 +161,8 @@ extern const pb_msgdesc_t SystemLeaveResponse_msg;
 #define SystemLeaveResponse_fields &SystemLeaveResponse_msg
 
 /* Maximum encoded size of messages (where known) */
+#define Header_size                              19
+#define MessageInfo_size                         6
 #define KeyExchangeRequest_size                  118
 #define KeyExchangeResponse_size                 96
 /* SystemJoinRequest_size depends on runtime parameters */
