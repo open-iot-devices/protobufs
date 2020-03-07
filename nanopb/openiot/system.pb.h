@@ -44,7 +44,7 @@ typedef struct _JoinRequest {
 
 typedef struct _JoinResponse {
     pb_callback_t name;
-    uint32_t timestamp;
+    int64_t timestamp;
 } JoinResponse;
 
 typedef struct _KeyExchangeRequest {
@@ -142,7 +142,7 @@ X(a, STATIC,   SINGULAR, UENUM,    encryption_type,   5)
 
 #define JoinResponse_FIELDLIST(X, a) \
 X(a, CALLBACK, SINGULAR, STRING,   name,              1) \
-X(a, STATIC,   SINGULAR, UINT32,   timestamp,         2)
+X(a, STATIC,   SINGULAR, INT64,    timestamp,         2)
 #define JoinResponse_CALLBACK pb_default_field_callback
 #define JoinResponse_DEFAULT NULL
 

@@ -56,7 +56,7 @@ message JoinResponse {
     // Server's name
     string name = 1;
     // Server's timestamp
-    uint32 timestamp = 2;
+    int64 timestamp = 2;
 }
 
 // Deveice request to leave IoT network
