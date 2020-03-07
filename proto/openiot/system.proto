@@ -42,7 +42,7 @@ message KeyExchangeResponse {
 // Request to join IoT network from device.
 // If device uses encryption it must initiate key exchange
 // prior to join.
-message SystemJoinRequest {
+message JoinRequest {
     string name = 1;
     string manufacturer = 2;
     string product_url = 3;
@@ -52,7 +52,7 @@ message SystemJoinRequest {
 }
 
 // Request to join response from controller to device.
-message SystemJoinResponse {
+message JoinResponse {
     // Server's name
     string name = 1;
     // Server's timestamp
@@ -60,11 +60,11 @@ message SystemJoinResponse {
 }
 
 // Deveice request to leave IoT network
-message SystemLeaveRequest {
+message LeaveRequest {
     string reason = 1;
 }
 
 // Controller response to leave network request
-message SystemLeaveResponse {
+message LeaveResponse {
     // Just confirmation from controller
 }

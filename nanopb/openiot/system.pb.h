@@ -13,27 +13,39 @@
 extern "C" {
 #endif
 
+/* Enum definitions */
+typedef enum _EncryptionType {
+    EncryptionType_PLAIN = 0,
+    EncryptionType_AES_ECB = 1
+} EncryptionType;
+
 /* Struct definitions */
-typedef struct _SystemJoinRequest {
-    pb_callback_t name;
-    pb_callback_t manufacturer;
-    pb_callback_t product_url;
-    pb_callback_t protobuf_url;
-} SystemJoinRequest;
-
-typedef struct _SystemLeaveRequest {
+typedef struct _LeaveRequest {
     pb_callback_t reason;
-} SystemLeaveRequest;
+} LeaveRequest;
 
-typedef struct _SystemLeaveResponse {
+typedef struct _LeaveResponse {
     char dummy_field;
-} SystemLeaveResponse;
+} LeaveResponse;
 
 typedef struct _Header {
     uint64_t device_id;
     uint32_t crc;
     bool key_exchange;
 } Header;
+
+typedef struct _JoinRequest {
+    pb_callback_t name;
+    pb_callback_t manufacturer;
+    pb_callback_t product_url;
+    pb_callback_t protobuf_url;
+    EncryptionType encryption_type;
+} JoinRequest;
+
+typedef struct _JoinResponse {
+    pb_callback_t name;
+    uint32_t timestamp;
+} JoinResponse;
 
 typedef struct _KeyExchangeRequest {
     uint64_t dh_p;
@@ -51,10 +63,11 @@ typedef struct _MessageInfo {
     uint32_t sequence;
 } MessageInfo;
 
-typedef struct _SystemJoinResponse {
-    pb_callback_t name;
-    uint32_t timestamp;
-} SystemJoinResponse;
+
+/* Helper constants for enums */
+#define _EncryptionType_MIN EncryptionType_PLAIN
+#define _EncryptionType_MAX EncryptionType_AES_ECB
+#define _EncryptionType_ARRAYSIZE ((EncryptionType)(EncryptionType_AES_ECB+1))
 
 
 /* Initializer values for message structs */
@@ -62,35 +75,36 @@ typedef struct _SystemJoinResponse {
 #define MessageInfo_init_default                 {0}
 #define KeyExchangeRequest_init_default          {0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
 #define KeyExchangeResponse_init_default         {0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
-#define SystemJoinRequest_init_default           {{{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}}
-#define SystemJoinResponse_init_default          {{{NULL}, NULL}, 0}
-#define SystemLeaveRequest_init_default          {{{NULL}, NULL}}
-#define SystemLeaveResponse_init_default         {0}
+#define JoinRequest_init_default                 {{{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, _EncryptionType_MIN}
+#define JoinResponse_init_default                {{{NULL}, NULL}, 0}
+#define LeaveRequest_init_default                {{{NULL}, NULL}}
+#define LeaveResponse_init_default               {0}
 #define Header_init_zero                         {0, 0, 0}
 #define MessageInfo_init_zero                    {0}
 #define KeyExchangeRequest_init_zero             {0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
 #define KeyExchangeResponse_init_zero            {0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
-#define SystemJoinRequest_init_zero              {{{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}}
-#define SystemJoinResponse_init_zero             {{{NULL}, NULL}, 0}
-#define SystemLeaveRequest_init_zero             {{{NULL}, NULL}}
-#define SystemLeaveResponse_init_zero            {0}
+#define JoinRequest_init_zero                    {{{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, _EncryptionType_MIN}
+#define JoinResponse_init_zero                   {{{NULL}, NULL}, 0}
+#define LeaveRequest_init_zero                   {{{NULL}, NULL}}
+#define LeaveResponse_init_zero                  {0}
 
 /* Field tags (for use in manual encoding/decoding) */
-#define SystemJoinRequest_name_tag               1
-#define SystemJoinRequest_manufacturer_tag       2
-#define SystemJoinRequest_product_url_tag        3
-#define SystemJoinRequest_protobuf_url_tag       4
-#define SystemLeaveRequest_reason_tag            1
+#define LeaveRequest_reason_tag                  1
 #define Header_device_id_tag                     1
 #define Header_crc_tag                           2
 #define Header_key_exchange_tag                  3
+#define JoinRequest_name_tag                     1
+#define JoinRequest_manufacturer_tag             2
+#define JoinRequest_product_url_tag              3
+#define JoinRequest_protobuf_url_tag             4
+#define JoinRequest_encryption_type_tag          5
+#define JoinResponse_name_tag                    1
+#define JoinResponse_timestamp_tag               2
 #define KeyExchangeRequest_dh_p_tag              1
 #define KeyExchangeRequest_dh_g_tag              2
 #define KeyExchangeRequest_dh_a_tag              3
 #define KeyExchangeResponse_dh_b_tag             1
 #define MessageInfo_sequence_tag                 1
-#define SystemJoinResponse_name_tag              1
-#define SystemJoinResponse_timestamp_tag         2
 
 /* Struct field encoding specification for nanopb */
 #define Header_FIELDLIST(X, a) \
@@ -117,58 +131,59 @@ X(a, STATIC,   REPEATED, UINT32,   dh_b,              1)
 #define KeyExchangeResponse_CALLBACK NULL
 #define KeyExchangeResponse_DEFAULT NULL
 
-#define SystemJoinRequest_FIELDLIST(X, a) \
+#define JoinRequest_FIELDLIST(X, a) \
 X(a, CALLBACK, SINGULAR, STRING,   name,              1) \
 X(a, CALLBACK, SINGULAR, STRING,   manufacturer,      2) \
 X(a, CALLBACK, SINGULAR, STRING,   product_url,       3) \
-X(a, CALLBACK, SINGULAR, STRING,   protobuf_url,      4)
-#define SystemJoinRequest_CALLBACK pb_default_field_callback
-#define SystemJoinRequest_DEFAULT NULL
+X(a, CALLBACK, SINGULAR, STRING,   protobuf_url,      4) \
+X(a, STATIC,   SINGULAR, UENUM,    encryption_type,   5)
+#define JoinRequest_CALLBACK pb_default_field_callback
+#define JoinRequest_DEFAULT NULL
 
-#define SystemJoinResponse_FIELDLIST(X, a) \
+#define JoinResponse_FIELDLIST(X, a) \
 X(a, CALLBACK, SINGULAR, STRING,   name,              1) \
 X(a, STATIC,   SINGULAR, UINT32,   timestamp,         2)
-#define SystemJoinResponse_CALLBACK pb_default_field_callback
-#define SystemJoinResponse_DEFAULT NULL
+#define JoinResponse_CALLBACK pb_default_field_callback
+#define JoinResponse_DEFAULT NULL
 
-#define SystemLeaveRequest_FIELDLIST(X, a) \
+#define LeaveRequest_FIELDLIST(X, a) \
 X(a, CALLBACK, SINGULAR, STRING,   reason,            1)
-#define SystemLeaveRequest_CALLBACK pb_default_field_callback
-#define SystemLeaveRequest_DEFAULT NULL
+#define LeaveRequest_CALLBACK pb_default_field_callback
+#define LeaveRequest_DEFAULT NULL
 
-#define SystemLeaveResponse_FIELDLIST(X, a) \
+#define LeaveResponse_FIELDLIST(X, a) \
 
-#define SystemLeaveResponse_CALLBACK NULL
-#define SystemLeaveResponse_DEFAULT NULL
+#define LeaveResponse_CALLBACK NULL
+#define LeaveResponse_DEFAULT NULL
 
 extern const pb_msgdesc_t Header_msg;
 extern const pb_msgdesc_t MessageInfo_msg;
 extern const pb_msgdesc_t KeyExchangeRequest_msg;
 extern const pb_msgdesc_t KeyExchangeResponse_msg;
-extern const pb_msgdesc_t SystemJoinRequest_msg;
-extern const pb_msgdesc_t SystemJoinResponse_msg;
-extern const pb_msgdesc_t SystemLeaveRequest_msg;
-extern const pb_msgdesc_t SystemLeaveResponse_msg;
+extern const pb_msgdesc_t JoinRequest_msg;
+extern const pb_msgdesc_t JoinResponse_msg;
+extern const pb_msgdesc_t LeaveRequest_msg;
+extern const pb_msgdesc_t LeaveResponse_msg;
 
 /* Defines for backwards compatibility with code written before nanopb-0.4.0 */
 #define Header_fields &Header_msg
 #define MessageInfo_fields &MessageInfo_msg
 #define KeyExchangeRequest_fields &KeyExchangeRequest_msg
 #define KeyExchangeResponse_fields &KeyExchangeResponse_msg
-#define SystemJoinRequest_fields &SystemJoinRequest_msg
-#define SystemJoinResponse_fields &SystemJoinResponse_msg
-#define SystemLeaveRequest_fields &SystemLeaveRequest_msg
-#define SystemLeaveResponse_fields &SystemLeaveResponse_msg
+#define JoinRequest_fields &JoinRequest_msg
+#define JoinResponse_fields &JoinResponse_msg
+#define LeaveRequest_fields &LeaveRequest_msg
+#define LeaveResponse_fields &LeaveResponse_msg
 
 /* Maximum encoded size of messages (where known) */
 #define Header_size                              19
 #define MessageInfo_size                         6
 #define KeyExchangeRequest_size                  118
 #define KeyExchangeResponse_size                 96
-/* SystemJoinRequest_size depends on runtime parameters */
-/* SystemJoinResponse_size depends on runtime parameters */
-/* SystemLeaveRequest_size depends on runtime parameters */
-#define SystemLeaveResponse_size                 0
+/* JoinRequest_size depends on runtime parameters */
+/* JoinResponse_size depends on runtime parameters */
+/* LeaveRequest_size depends on runtime parameters */
+#define LeaveResponse_size                       0
 
 #ifdef __cplusplus
 } /* extern "C" */

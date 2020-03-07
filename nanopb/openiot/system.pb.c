@@ -18,16 +18,17 @@ PB_BIND(KeyExchangeRequest, KeyExchangeRequest, AUTO)
 PB_BIND(KeyExchangeResponse, KeyExchangeResponse, AUTO)
 
 
-PB_BIND(SystemJoinRequest, SystemJoinRequest, AUTO)
+PB_BIND(JoinRequest, JoinRequest, AUTO)
 
 
-PB_BIND(SystemJoinResponse, SystemJoinResponse, AUTO)
+PB_BIND(JoinResponse, JoinResponse, AUTO)
 
 
-PB_BIND(SystemLeaveRequest, SystemLeaveRequest, AUTO)
+PB_BIND(LeaveRequest, LeaveRequest, AUTO)
 
 
-PB_BIND(SystemLeaveResponse, SystemLeaveResponse, AUTO)
+PB_BIND(LeaveResponse, LeaveResponse, AUTO)
+
 
 
 
