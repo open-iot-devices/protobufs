@@ -3,6 +3,9 @@
 # Do not include package name
 * mangle_names: M_STRIP_PACKAGE
 
+# AES_IV - always 128bit
+Header.aes_iv max_size: 16, fixed_length: true
+
 # Diffie-Hellman arrays are the same length as AES_KEY -> 16
 KeyExchangeRequest.dh_a max_count: 16
 KeyExchangeResponse.dh_b max_count: 16

@@ -16,7 +16,8 @@ extern "C" {
 /* Enum definitions */
 typedef enum _EncryptionType {
     EncryptionType_PLAIN = 0,
-    EncryptionType_AES_ECB = 1
+    EncryptionType_AES_ECB = 1,
+    EncryptionType_AES_CBC = 2
 } EncryptionType;
 
 /* Struct definitions */
@@ -39,6 +40,8 @@ typedef struct _Header {
     uint64_t device_id;
     uint32_t crc;
     bool key_exchange;
+    bool join_request;
+    pb_byte_t aes_iv[16];
 } Header;
 
 typedef struct _JoinResponse {
@@ -66,12 +69,12 @@ typedef struct _MessageInfo {
 
 /* Helper constants for enums */
 #define _EncryptionType_MIN EncryptionType_PLAIN
-#define _EncryptionType_MAX EncryptionType_AES_ECB
-#define _EncryptionType_ARRAYSIZE ((EncryptionType)(EncryptionType_AES_ECB+1))
+#define _EncryptionType_MAX EncryptionType_AES_CBC
+#define _EncryptionType_ARRAYSIZE ((EncryptionType)(EncryptionType_AES_CBC+1))
 
 
 /* Initializer values for message structs */
-#define Header_init_default                      {0, 0, 0}
+#define Header_init_default                      {0, 0, 0, 0, {0}}
 #define MessageInfo_init_default                 {0}
 #define KeyExchangeRequest_init_default          {0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, _EncryptionType_MIN}
 #define KeyExchangeResponse_init_default         {0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
@@ -79,7 +82,7 @@ typedef struct _MessageInfo {
 #define JoinResponse_init_default                {{{NULL}, NULL}, 0}
 #define LeaveRequest_init_default                {{{NULL}, NULL}}
 #define LeaveResponse_init_default               {0}
-#define Header_init_zero                         {0, 0, 0}
+#define Header_init_zero                         {0, 0, 0, 0, {0}}
 #define MessageInfo_init_zero                    {0}
 #define KeyExchangeRequest_init_zero             {0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, _EncryptionType_MIN}
 #define KeyExchangeResponse_init_zero            {0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
@@ -94,9 +97,11 @@ typedef struct _MessageInfo {
 #define JoinRequest_product_url_tag              3
 #define JoinRequest_protobuf_url_tag             4
 #define LeaveRequest_reason_tag                  1
-#define Header_device_id_tag                     1
-#define Header_crc_tag                           2
-#define Header_key_exchange_tag                  3
+#define Header_device_id_tag                     100
+#define Header_crc_tag                           101
+#define Header_key_exchange_tag                  102
+#define Header_join_request_tag                  103
+#define Header_aes_iv_tag                        104
 #define JoinResponse_name_tag                    1
 #define JoinResponse_timestamp_tag               2
 #define KeyExchangeRequest_dh_p_tag              1
@@ -108,9 +113,11 @@ typedef struct _MessageInfo {
 
 /* Struct field encoding specification for nanopb */
 #define Header_FIELDLIST(X, a) \
-X(a, STATIC,   SINGULAR, UINT64,   device_id,         1) \
-X(a, STATIC,   SINGULAR, UINT32,   crc,               2) \
-X(a, STATIC,   SINGULAR, BOOL,     key_exchange,      3)
+X(a, STATIC,   SINGULAR, UINT64,   device_id,       100) \
+X(a, STATIC,   SINGULAR, UINT32,   crc,             101) \
+X(a, STATIC,   SINGULAR, BOOL,     key_exchange,    102) \
+X(a, STATIC,   SINGULAR, BOOL,     join_request,    103) \
+X(a, STATIC,   SINGULAR, FIXED_LENGTH_BYTES, aes_iv,          104)
 #define Header_CALLBACK NULL
 #define Header_DEFAULT NULL
 
@@ -176,7 +183,7 @@ extern const pb_msgdesc_t LeaveResponse_msg;
 #define LeaveResponse_fields &LeaveResponse_msg
 
 /* Maximum encoded size of messages (where known) */
-#define Header_size                              19
+#define Header_size                              44
 #define MessageInfo_size                         6
 #define KeyExchangeRequest_size                  120
 #define KeyExchangeResponse_size                 96

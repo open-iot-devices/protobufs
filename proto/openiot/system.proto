@@ -5,17 +5,22 @@ package openiot;
 enum EncryptionType {
     PLAIN = 0;
     AES_ECB = 1;
+    AES_CBC = 2;
 }
 
 // Always unencrypted message header
 // to be able to find decryption key by device id.
 message Header {
     // Unique (at least within network) device ID.
-    uint64 device_id = 1;
+    uint64 device_id = 100;
     // CRC of message data before encryption (if desired).
-    uint32 crc = 2;
+    uint32 crc = 101;
     // Indicates that message contains key exchange request / response
-    bool key_exchange = 3;
+    bool key_exchange = 102;
+    // Indicates that device would like to join network
+    bool join_request = 103;
+    // Optional: for AES_CBC encoding
+    bytes aes_iv = 104;
 }
 
 // A message followed by Header and describes common
