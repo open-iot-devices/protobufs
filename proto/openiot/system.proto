@@ -29,9 +29,14 @@ message MessageInfo {
 
 // Diffie-Hellman key exchange: device to controller.
 message KeyExchangeRequest {
-    uint64 dh_p = 1;   // modulus
-    uint64 dh_g = 2;   // base
-    repeated uint32 dh_a = 3;  // "public" key of device
+    // Diffie-Hellman modulus
+    uint64 dh_p = 1;
+    // Diffie-Hellman base
+    uint64 dh_g = 2;
+    // "Public" key of device
+    repeated uint32 dh_a = 3;
+    // Desired encryption type
+    EncryptionType encryption_type = 4;
 }
 
 // Diffie-Hellman key exchange: controller to device.
@@ -47,8 +52,6 @@ message JoinRequest {
     string manufacturer = 2;
     string product_url = 3;
     string protobuf_url = 4;
-
-    EncryptionType encryption_type = 5;
 }
 
 // Request to join response from controller to device.

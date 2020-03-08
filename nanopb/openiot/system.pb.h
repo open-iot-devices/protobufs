@@ -20,6 +20,13 @@ typedef enum _EncryptionType {
 } EncryptionType;
 
 /* Struct definitions */
+typedef struct _JoinRequest {
+    pb_callback_t name;
+    pb_callback_t manufacturer;
+    pb_callback_t product_url;
+    pb_callback_t protobuf_url;
+} JoinRequest;
+
 typedef struct _LeaveRequest {
     pb_callback_t reason;
 } LeaveRequest;
@@ -34,14 +41,6 @@ typedef struct _Header {
     bool key_exchange;
 } Header;
 
-typedef struct _JoinRequest {
-    pb_callback_t name;
-    pb_callback_t manufacturer;
-    pb_callback_t product_url;
-    pb_callback_t protobuf_url;
-    EncryptionType encryption_type;
-} JoinRequest;
-
 typedef struct _JoinResponse {
     pb_callback_t name;
     int64_t timestamp;
@@ -52,6 +51,7 @@ typedef struct _KeyExchangeRequest {
     uint64_t dh_g;
     pb_size_t dh_a_count;
     uint32_t dh_a[16];
+    EncryptionType encryption_type;
 } KeyExchangeRequest;
 
 typedef struct _KeyExchangeResponse {
@@ -73,36 +73,36 @@ typedef struct _MessageInfo {
 /* Initializer values for message structs */
 #define Header_init_default                      {0, 0, 0}
 #define MessageInfo_init_default                 {0}
-#define KeyExchangeRequest_init_default          {0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
+#define KeyExchangeRequest_init_default          {0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, _EncryptionType_MIN}
 #define KeyExchangeResponse_init_default         {0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
-#define JoinRequest_init_default                 {{{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, _EncryptionType_MIN}
+#define JoinRequest_init_default                 {{{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}}
 #define JoinResponse_init_default                {{{NULL}, NULL}, 0}
 #define LeaveRequest_init_default                {{{NULL}, NULL}}
 #define LeaveResponse_init_default               {0}
 #define Header_init_zero                         {0, 0, 0}
 #define MessageInfo_init_zero                    {0}
-#define KeyExchangeRequest_init_zero             {0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
+#define KeyExchangeRequest_init_zero             {0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, _EncryptionType_MIN}
 #define KeyExchangeResponse_init_zero            {0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
-#define JoinRequest_init_zero                    {{{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, _EncryptionType_MIN}
+#define JoinRequest_init_zero                    {{{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}}
 #define JoinResponse_init_zero                   {{{NULL}, NULL}, 0}
 #define LeaveRequest_init_zero                   {{{NULL}, NULL}}
 #define LeaveResponse_init_zero                  {0}
 
 /* Field tags (for use in manual encoding/decoding) */
-#define LeaveRequest_reason_tag                  1
-#define Header_device_id_tag                     1
-#define Header_crc_tag                           2
-#define Header_key_exchange_tag                  3
 #define JoinRequest_name_tag                     1
 #define JoinRequest_manufacturer_tag             2
 #define JoinRequest_product_url_tag              3
 #define JoinRequest_protobuf_url_tag             4
-#define JoinRequest_encryption_type_tag          5
+#define LeaveRequest_reason_tag                  1
+#define Header_device_id_tag                     1
+#define Header_crc_tag                           2
+#define Header_key_exchange_tag                  3
 #define JoinResponse_name_tag                    1
 #define JoinResponse_timestamp_tag               2
 #define KeyExchangeRequest_dh_p_tag              1
 #define KeyExchangeRequest_dh_g_tag              2
 #define KeyExchangeRequest_dh_a_tag              3
+#define KeyExchangeRequest_encryption_type_tag   4
 #define KeyExchangeResponse_dh_b_tag             1
 #define MessageInfo_sequence_tag                 1
 
@@ -122,7 +122,8 @@ X(a, STATIC,   SINGULAR, UINT32,   sequence,          1)
 #define KeyExchangeRequest_FIELDLIST(X, a) \
 X(a, STATIC,   SINGULAR, UINT64,   dh_p,              1) \
 X(a, STATIC,   SINGULAR, UINT64,   dh_g,              2) \
-X(a, STATIC,   REPEATED, UINT32,   dh_a,              3)
+X(a, STATIC,   REPEATED, UINT32,   dh_a,              3) \
+X(a, STATIC,   SINGULAR, UENUM,    encryption_type,   4)
 #define KeyExchangeRequest_CALLBACK NULL
 #define KeyExchangeRequest_DEFAULT NULL
 
@@ -135,8 +136,7 @@ X(a, STATIC,   REPEATED, UINT32,   dh_b,              1)
 X(a, CALLBACK, SINGULAR, STRING,   name,              1) \
 X(a, CALLBACK, SINGULAR, STRING,   manufacturer,      2) \
 X(a, CALLBACK, SINGULAR, STRING,   product_url,       3) \
-X(a, CALLBACK, SINGULAR, STRING,   protobuf_url,      4) \
-X(a, STATIC,   SINGULAR, UENUM,    encryption_type,   5)
+X(a, CALLBACK, SINGULAR, STRING,   protobuf_url,      4)
 #define JoinRequest_CALLBACK pb_default_field_callback
 #define JoinRequest_DEFAULT NULL
 
@@ -178,7 +178,7 @@ extern const pb_msgdesc_t LeaveResponse_msg;
 /* Maximum encoded size of messages (where known) */
 #define Header_size                              19
 #define MessageInfo_size                         6
-#define KeyExchangeRequest_size                  118
+#define KeyExchangeRequest_size                  120
 #define KeyExchangeResponse_size                 96
 /* JoinRequest_size depends on runtime parameters */
 /* JoinResponse_size depends on runtime parameters */
