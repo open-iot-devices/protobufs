@@ -55,13 +55,15 @@ message KeyExchangeResponse {
 }
 
 // Request to join IoT network from device.
-// If device uses encryption it must initiate key exchange
-// prior to join.
+// If device uses encryption it must complete key exchange
+// before and encrypt JoinRequest as well.
 message JoinRequest {
     string name = 1;
     string manufacturer = 2;
     string product_url = 3;
     string protobuf_url = 4;
+    // Default Device Handler
+    string default_handler = 5;
 }
 
 // Request to join response from controller to device.

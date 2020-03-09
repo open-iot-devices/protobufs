@@ -26,6 +26,7 @@ typedef struct _JoinRequest {
     pb_callback_t manufacturer;
     pb_callback_t product_url;
     pb_callback_t protobuf_url;
+    pb_callback_t default_handler;
 } JoinRequest;
 
 typedef struct _LeaveRequest {
@@ -79,7 +80,7 @@ typedef struct _MessageInfo {
 #define MessageInfo_init_default                 {0, {{NULL}, NULL}}
 #define KeyExchangeRequest_init_default          {0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, _EncryptionType_MIN}
 #define KeyExchangeResponse_init_default         {0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
-#define JoinRequest_init_default                 {{{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}}
+#define JoinRequest_init_default                 {{{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}}
 #define JoinResponse_init_default                {{{NULL}, NULL}, 0}
 #define LeaveRequest_init_default                {{{NULL}, NULL}}
 #define LeaveResponse_init_default               {0}
@@ -87,7 +88,7 @@ typedef struct _MessageInfo {
 #define MessageInfo_init_zero                    {0, {{NULL}, NULL}}
 #define KeyExchangeRequest_init_zero             {0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, _EncryptionType_MIN}
 #define KeyExchangeResponse_init_zero            {0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
-#define JoinRequest_init_zero                    {{{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}}
+#define JoinRequest_init_zero                    {{{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}}
 #define JoinResponse_init_zero                   {{{NULL}, NULL}, 0}
 #define LeaveRequest_init_zero                   {{{NULL}, NULL}}
 #define LeaveResponse_init_zero                  {0}
@@ -97,6 +98,7 @@ typedef struct _MessageInfo {
 #define JoinRequest_manufacturer_tag             2
 #define JoinRequest_product_url_tag              3
 #define JoinRequest_protobuf_url_tag             4
+#define JoinRequest_default_handler_tag          5
 #define LeaveRequest_reason_tag                  1
 #define Header_device_id_tag                     100
 #define Header_crc_tag                           101
@@ -146,7 +148,8 @@ X(a, STATIC,   REPEATED, UINT32,   dh_b,              1)
 X(a, CALLBACK, SINGULAR, STRING,   name,              1) \
 X(a, CALLBACK, SINGULAR, STRING,   manufacturer,      2) \
 X(a, CALLBACK, SINGULAR, STRING,   product_url,       3) \
-X(a, CALLBACK, SINGULAR, STRING,   protobuf_url,      4)
+X(a, CALLBACK, SINGULAR, STRING,   protobuf_url,      4) \
+X(a, CALLBACK, SINGULAR, STRING,   default_handler,   5)
 #define JoinRequest_CALLBACK pb_default_field_callback
 #define JoinRequest_DEFAULT NULL
 
