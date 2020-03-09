@@ -64,6 +64,7 @@ typedef struct _KeyExchangeResponse {
 
 typedef struct _MessageInfo {
     uint32_t sequence;
+    pb_callback_t proto_name;
 } MessageInfo;
 
 
@@ -75,7 +76,7 @@ typedef struct _MessageInfo {
 
 /* Initializer values for message structs */
 #define Header_init_default                      {0, 0, 0, 0, {0}}
-#define MessageInfo_init_default                 {0}
+#define MessageInfo_init_default                 {0, {{NULL}, NULL}}
 #define KeyExchangeRequest_init_default          {0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, _EncryptionType_MIN}
 #define KeyExchangeResponse_init_default         {0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
 #define JoinRequest_init_default                 {{{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}}
@@ -83,7 +84,7 @@ typedef struct _MessageInfo {
 #define LeaveRequest_init_default                {{{NULL}, NULL}}
 #define LeaveResponse_init_default               {0}
 #define Header_init_zero                         {0, 0, 0, 0, {0}}
-#define MessageInfo_init_zero                    {0}
+#define MessageInfo_init_zero                    {0, {{NULL}, NULL}}
 #define KeyExchangeRequest_init_zero             {0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, _EncryptionType_MIN}
 #define KeyExchangeResponse_init_zero            {0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
 #define JoinRequest_init_zero                    {{{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}}
@@ -110,6 +111,7 @@ typedef struct _MessageInfo {
 #define KeyExchangeRequest_encryption_type_tag   4
 #define KeyExchangeResponse_dh_b_tag             1
 #define MessageInfo_sequence_tag                 1
+#define MessageInfo_proto_name_tag               2
 
 /* Struct field encoding specification for nanopb */
 #define Header_FIELDLIST(X, a) \
@@ -122,8 +124,9 @@ X(a, STATIC,   SINGULAR, FIXED_LENGTH_BYTES, aes_iv,          104)
 #define Header_DEFAULT NULL
 
 #define MessageInfo_FIELDLIST(X, a) \
-X(a, STATIC,   SINGULAR, UINT32,   sequence,          1)
-#define MessageInfo_CALLBACK NULL
+X(a, STATIC,   SINGULAR, UINT32,   sequence,          1) \
+X(a, CALLBACK, SINGULAR, STRING,   proto_name,        2)
+#define MessageInfo_CALLBACK pb_default_field_callback
 #define MessageInfo_DEFAULT NULL
 
 #define KeyExchangeRequest_FIELDLIST(X, a) \
@@ -184,7 +187,7 @@ extern const pb_msgdesc_t LeaveResponse_msg;
 
 /* Maximum encoded size of messages (where known) */
 #define Header_size                              44
-#define MessageInfo_size                         6
+/* MessageInfo_size depends on runtime parameters */
 #define KeyExchangeRequest_size                  120
 #define KeyExchangeResponse_size                 96
 /* JoinRequest_size depends on runtime parameters */

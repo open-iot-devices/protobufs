@@ -15,9 +15,9 @@ message Header {
     uint64 device_id = 100;
     // CRC of message data before encryption (if desired).
     uint32 crc = 101;
-    // Indicates that message contains key exchange request / response
+    // Indicates that next message is KeyExchangeRequest/KeyExchangeResponse
     bool key_exchange = 102;
-    // Indicates that device would like to join network
+    // Indicates that next message is JoinRequest/JoinResponse
     bool join_request = 103;
     // Optional: for AES_CBC encoding
     bytes aes_iv = 104;
@@ -30,6 +30,11 @@ message MessageInfo {
     // uint32 should last about 136 years even if device / controller
     // will be sending messages every second
     uint32 sequence = 1;
+    // Full Name of followed proto message in format: packageName.MessageName
+    // e.g.
+    // "openiot.SystemJoinRequest"
+    // It is similar as google.Any approach, but without dependencies.
+    string proto_name = 2;
 }
 
 // Diffie-Hellman key exchange: device to controller.
