@@ -4,7 +4,7 @@
 * mangle_names: M_STRIP_PACKAGE
 
 # AES_IV - always 128bit
-Header.aes_iv max_size: 16, fixed_length: true
+Header.aes_iv max_size: 16
 
 # Diffie-Hellman arrays are the same length as AES_KEY -> 16
 KeyExchangeRequest.dh_a max_count: 16

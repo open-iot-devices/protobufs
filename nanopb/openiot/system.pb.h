@@ -37,12 +37,13 @@ typedef struct _LeaveResponse {
     char dummy_field;
 } LeaveResponse;
 
+typedef PB_BYTES_ARRAY_T(16) Header_aes_iv_t;
 typedef struct _Header {
     uint64_t device_id;
     uint32_t crc;
     bool key_exchange;
     bool join_request;
-    pb_byte_t aes_iv[16];
+    Header_aes_iv_t aes_iv;
 } Header;
 
 typedef struct _JoinResponse {
@@ -76,7 +77,7 @@ typedef struct _MessageInfo {
 
 
 /* Initializer values for message structs */
-#define Header_init_default                      {0, 0, 0, 0, {0}}
+#define Header_init_default                      {0, 0, 0, 0, {0, {0}}}
 #define MessageInfo_init_default                 {0, {{NULL}, NULL}}
 #define KeyExchangeRequest_init_default          {0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, _EncryptionType_MIN}
 #define KeyExchangeResponse_init_default         {0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
@@ -84,7 +85,7 @@ typedef struct _MessageInfo {
 #define JoinResponse_init_default                {{{NULL}, NULL}, 0}
 #define LeaveRequest_init_default                {{{NULL}, NULL}}
 #define LeaveResponse_init_default               {0}
-#define Header_init_zero                         {0, 0, 0, 0, {0}}
+#define Header_init_zero                         {0, 0, 0, 0, {0, {0}}}
 #define MessageInfo_init_zero                    {0, {{NULL}, NULL}}
 #define KeyExchangeRequest_init_zero             {0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, _EncryptionType_MIN}
 #define KeyExchangeResponse_init_zero            {0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
@@ -121,7 +122,7 @@ X(a, STATIC,   SINGULAR, UINT64,   device_id,       100) \
 X(a, STATIC,   SINGULAR, UINT32,   crc,             101) \
 X(a, STATIC,   SINGULAR, BOOL,     key_exchange,    102) \
 X(a, STATIC,   SINGULAR, BOOL,     join_request,    103) \
-X(a, STATIC,   SINGULAR, FIXED_LENGTH_BYTES, aes_iv,          104)
+X(a, STATIC,   SINGULAR, BYTES,    aes_iv,          104)
 #define Header_CALLBACK NULL
 #define Header_DEFAULT NULL
 
