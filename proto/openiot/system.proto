@@ -14,7 +14,7 @@ message Header {
     // Unique (at least within network) device ID.
     uint64 device_id = 100;
     // CRC of message data before encryption (if desired).
-    uint32 crc = 101;
+    fixed32 crc = 101;
     // Indicates that next message is KeyExchangeRequest/KeyExchangeResponse
     bool key_exchange = 102;
     // Indicates that next message is JoinRequest/JoinResponse

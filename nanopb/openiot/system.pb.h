@@ -119,7 +119,7 @@ typedef struct _MessageInfo {
 /* Struct field encoding specification for nanopb */
 #define Header_FIELDLIST(X, a) \
 X(a, STATIC,   SINGULAR, UINT64,   device_id,       100) \
-X(a, STATIC,   SINGULAR, UINT32,   crc,             101) \
+X(a, STATIC,   SINGULAR, FIXED32,  crc,             101) \
 X(a, STATIC,   SINGULAR, BOOL,     key_exchange,    102) \
 X(a, STATIC,   SINGULAR, BOOL,     join_request,    103) \
 X(a, STATIC,   SINGULAR, BYTES,    aes_iv,          104)
@@ -190,7 +190,7 @@ extern const pb_msgdesc_t LeaveResponse_msg;
 #define LeaveResponse_fields &LeaveResponse_msg
 
 /* Maximum encoded size of messages (where known) */
-#define Header_size                              44
+#define Header_size                              43
 /* MessageInfo_size depends on runtime parameters */
 #define KeyExchangeRequest_size                  120
 #define KeyExchangeResponse_size                 96
