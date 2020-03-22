@@ -499,7 +499,9 @@ func init() {
 	proto.RegisterType((*LeaveResponse)(nil), "openiot.LeaveResponse")
 }
 
-func init() { proto.RegisterFile("openiot/system.proto", fileDescriptor_477c448daeb2d28d) }
+func init() {
+	proto.RegisterFile("openiot/system.proto", fileDescriptor_477c448daeb2d28d)
+}
 
 var fileDescriptor_477c448daeb2d28d = []byte{
 	// 496 bytes of a gzipped FileDescriptorProto

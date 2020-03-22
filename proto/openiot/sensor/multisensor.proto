@@ -1,0 +1,24 @@
+syntax = "proto3";
+package sensor;
+
+message MultiSensorStatus {
+    Temperature  temperature = 1;
+    Humidity     humidity = 2;
+
+    // For battery power sensors - current battery state
+    Battery      battery = 10;
+}
+
+message Temperature {
+    float value_c = 1;
+    float value_f = 2;
+}
+
+message Humidity {
+    uint32 relative_percent = 1;
+}
+
+message Battery {
+    uint32 percent = 1;
+    uint32 voltage_mv = 2;
+}
