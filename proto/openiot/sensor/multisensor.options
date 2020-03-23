@@ -1,0 +1,4 @@
+## nanopb specific options ##
+
+# Do not include package name
+* mangle_names: M_STRIP_PACKAGE

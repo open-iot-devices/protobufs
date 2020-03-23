@@ -14,94 +14,94 @@ extern "C" {
 #endif
 
 /* Struct definitions */
-typedef struct _sensor_Battery {
+typedef struct _Battery {
     uint32_t percent;
     uint32_t voltage_mv;
-} sensor_Battery;
+} Battery;
 
-typedef struct _sensor_Humidity {
+typedef struct _Humidity {
     uint32_t relative_percent;
-} sensor_Humidity;
+} Humidity;
 
-typedef struct _sensor_Temperature {
+typedef struct _Temperature {
     float value_c;
     float value_f;
-} sensor_Temperature;
+} Temperature;
 
-typedef struct _sensor_MultiSensorStatus {
+typedef struct _MultiSensorStatus {
     bool has_temperature;
-    sensor_Temperature temperature;
+    Temperature temperature;
     bool has_humidity;
-    sensor_Humidity humidity;
+    Humidity humidity;
     bool has_battery;
-    sensor_Battery battery;
-} sensor_MultiSensorStatus;
+    Battery battery;
+} MultiSensorStatus;
 
 
 /* Initializer values for message structs */
-#define sensor_MultiSensorStatus_init_default    {false, sensor_Temperature_init_default, false, sensor_Humidity_init_default, false, sensor_Battery_init_default}
-#define sensor_Temperature_init_default          {0, 0}
-#define sensor_Humidity_init_default             {0}
-#define sensor_Battery_init_default              {0, 0}
-#define sensor_MultiSensorStatus_init_zero       {false, sensor_Temperature_init_zero, false, sensor_Humidity_init_zero, false, sensor_Battery_init_zero}
-#define sensor_Temperature_init_zero             {0, 0}
-#define sensor_Humidity_init_zero                {0}
-#define sensor_Battery_init_zero                 {0, 0}
+#define MultiSensorStatus_init_default           {false, Temperature_init_default, false, Humidity_init_default, false, Battery_init_default}
+#define Temperature_init_default                 {0, 0}
+#define Humidity_init_default                    {0}
+#define Battery_init_default                     {0, 0}
+#define MultiSensorStatus_init_zero              {false, Temperature_init_zero, false, Humidity_init_zero, false, Battery_init_zero}
+#define Temperature_init_zero                    {0, 0}
+#define Humidity_init_zero                       {0}
+#define Battery_init_zero                        {0, 0}
 
 /* Field tags (for use in manual encoding/decoding) */
-#define sensor_Battery_percent_tag               1
-#define sensor_Battery_voltage_mv_tag            2
-#define sensor_Humidity_relative_percent_tag     1
-#define sensor_Temperature_value_c_tag           1
-#define sensor_Temperature_value_f_tag           2
-#define sensor_MultiSensorStatus_temperature_tag 1
-#define sensor_MultiSensorStatus_humidity_tag    2
-#define sensor_MultiSensorStatus_battery_tag     10
+#define Battery_percent_tag                      1
+#define Battery_voltage_mv_tag                   2
+#define Humidity_relative_percent_tag            1
+#define Temperature_value_c_tag                  1
+#define Temperature_value_f_tag                  2
+#define MultiSensorStatus_temperature_tag        1
+#define MultiSensorStatus_humidity_tag           2
+#define MultiSensorStatus_battery_tag            10
 
 /* Struct field encoding specification for nanopb */
-#define sensor_MultiSensorStatus_FIELDLIST(X, a) \
+#define MultiSensorStatus_FIELDLIST(X, a) \
 X(a, STATIC,   OPTIONAL, MESSAGE,  temperature,       1) \
 X(a, STATIC,   OPTIONAL, MESSAGE,  humidity,          2) \
 X(a, STATIC,   OPTIONAL, MESSAGE,  battery,          10)
-#define sensor_MultiSensorStatus_CALLBACK NULL
-#define sensor_MultiSensorStatus_DEFAULT NULL
-#define sensor_MultiSensorStatus_temperature_MSGTYPE sensor_Temperature
-#define sensor_MultiSensorStatus_humidity_MSGTYPE sensor_Humidity
-#define sensor_MultiSensorStatus_battery_MSGTYPE sensor_Battery
+#define MultiSensorStatus_CALLBACK NULL
+#define MultiSensorStatus_DEFAULT NULL
+#define MultiSensorStatus_temperature_MSGTYPE Temperature
+#define MultiSensorStatus_humidity_MSGTYPE Humidity
+#define MultiSensorStatus_battery_MSGTYPE Battery
 
-#define sensor_Temperature_FIELDLIST(X, a) \
+#define Temperature_FIELDLIST(X, a) \
 X(a, STATIC,   SINGULAR, FLOAT,    value_c,           1) \
 X(a, STATIC,   SINGULAR, FLOAT,    value_f,           2)
-#define sensor_Temperature_CALLBACK NULL
-#define sensor_Temperature_DEFAULT NULL
+#define Temperature_CALLBACK NULL
+#define Temperature_DEFAULT NULL
 
-#define sensor_Humidity_FIELDLIST(X, a) \
+#define Humidity_FIELDLIST(X, a) \
 X(a, STATIC,   SINGULAR, UINT32,   relative_percent,   1)
-#define sensor_Humidity_CALLBACK NULL
-#define sensor_Humidity_DEFAULT NULL
+#define Humidity_CALLBACK NULL
+#define Humidity_DEFAULT NULL
 
-#define sensor_Battery_FIELDLIST(X, a) \
+#define Battery_FIELDLIST(X, a) \
 X(a, STATIC,   SINGULAR, UINT32,   percent,           1) \
 X(a, STATIC,   SINGULAR, UINT32,   voltage_mv,        2)
-#define sensor_Battery_CALLBACK NULL
-#define sensor_Battery_DEFAULT NULL
+#define Battery_CALLBACK NULL
+#define Battery_DEFAULT NULL
 
-extern const pb_msgdesc_t sensor_MultiSensorStatus_msg;
-extern const pb_msgdesc_t sensor_Temperature_msg;
-extern const pb_msgdesc_t sensor_Humidity_msg;
-extern const pb_msgdesc_t sensor_Battery_msg;
+extern const pb_msgdesc_t MultiSensorStatus_msg;
+extern const pb_msgdesc_t Temperature_msg;
+extern const pb_msgdesc_t Humidity_msg;
+extern const pb_msgdesc_t Battery_msg;
 
 /* Defines for backwards compatibility with code written before nanopb-0.4.0 */
-#define sensor_MultiSensorStatus_fields &sensor_MultiSensorStatus_msg
-#define sensor_Temperature_fields &sensor_Temperature_msg
-#define sensor_Humidity_fields &sensor_Humidity_msg
-#define sensor_Battery_fields &sensor_Battery_msg
+#define MultiSensorStatus_fields &MultiSensorStatus_msg
+#define Temperature_fields &Temperature_msg
+#define Humidity_fields &Humidity_msg
+#define Battery_fields &Battery_msg
 
 /* Maximum encoded size of messages (where known) */
-#define sensor_MultiSensorStatus_size            34
-#define sensor_Temperature_size                  10
-#define sensor_Humidity_size                     6
-#define sensor_Battery_size                      12
+#define MultiSensorStatus_size                   34
+#define Temperature_size                         10
+#define Humidity_size                            6
+#define Battery_size                             12
 
 #ifdef __cplusplus
 } /* extern "C" */
