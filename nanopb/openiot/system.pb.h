@@ -25,8 +25,8 @@ typedef struct _JoinRequest {
     pb_callback_t name;
     pb_callback_t manufacturer;
     pb_callback_t product_url;
-    pb_callback_t protobuf_url;
     pb_callback_t default_handler;
+    pb_callback_t protobuf_name;
 } JoinRequest;
 
 typedef struct _LeaveRequest {
@@ -66,7 +66,6 @@ typedef struct _KeyExchangeResponse {
 
 typedef struct _MessageInfo {
     uint32_t sequence;
-    pb_callback_t proto_name;
 } MessageInfo;
 
 
@@ -78,7 +77,7 @@ typedef struct _MessageInfo {
 
 /* Initializer values for message structs */
 #define Header_init_default                      {0, 0, 0, 0, {0, {0}}}
-#define MessageInfo_init_default                 {0, {{NULL}, NULL}}
+#define MessageInfo_init_default                 {0}
 #define KeyExchangeRequest_init_default          {0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, _EncryptionType_MIN}
 #define KeyExchangeResponse_init_default         {0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
 #define JoinRequest_init_default                 {{{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}}
@@ -86,7 +85,7 @@ typedef struct _MessageInfo {
 #define LeaveRequest_init_default                {{{NULL}, NULL}}
 #define LeaveResponse_init_default               {0}
 #define Header_init_zero                         {0, 0, 0, 0, {0, {0}}}
-#define MessageInfo_init_zero                    {0, {{NULL}, NULL}}
+#define MessageInfo_init_zero                    {0}
 #define KeyExchangeRequest_init_zero             {0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, _EncryptionType_MIN}
 #define KeyExchangeResponse_init_zero            {0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
 #define JoinRequest_init_zero                    {{{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}}
@@ -98,8 +97,8 @@ typedef struct _MessageInfo {
 #define JoinRequest_name_tag                     1
 #define JoinRequest_manufacturer_tag             2
 #define JoinRequest_product_url_tag              3
-#define JoinRequest_protobuf_url_tag             4
-#define JoinRequest_default_handler_tag          5
+#define JoinRequest_default_handler_tag          4
+#define JoinRequest_protobuf_name_tag            5
 #define LeaveRequest_reason_tag                  1
 #define Header_device_id_tag                     100
 #define Header_crc_tag                           101
@@ -114,7 +113,6 @@ typedef struct _MessageInfo {
 #define KeyExchangeRequest_encryption_type_tag   4
 #define KeyExchangeResponse_dh_b_tag             1
 #define MessageInfo_sequence_tag                 1
-#define MessageInfo_proto_name_tag               2
 
 /* Struct field encoding specification for nanopb */
 #define Header_FIELDLIST(X, a) \
@@ -127,9 +125,8 @@ X(a, STATIC,   SINGULAR, BYTES,    aes_iv,          104)
 #define Header_DEFAULT NULL
 
 #define MessageInfo_FIELDLIST(X, a) \
-X(a, STATIC,   SINGULAR, UINT32,   sequence,          1) \
-X(a, CALLBACK, SINGULAR, STRING,   proto_name,        2)
-#define MessageInfo_CALLBACK pb_default_field_callback
+X(a, STATIC,   SINGULAR, UINT32,   sequence,          1)
+#define MessageInfo_CALLBACK NULL
 #define MessageInfo_DEFAULT NULL
 
 #define KeyExchangeRequest_FIELDLIST(X, a) \
@@ -149,8 +146,8 @@ X(a, STATIC,   REPEATED, UINT32,   dh_b,              1)
 X(a, CALLBACK, SINGULAR, STRING,   name,              1) \
 X(a, CALLBACK, SINGULAR, STRING,   manufacturer,      2) \
 X(a, CALLBACK, SINGULAR, STRING,   product_url,       3) \
-X(a, CALLBACK, SINGULAR, STRING,   protobuf_url,      4) \
-X(a, CALLBACK, SINGULAR, STRING,   default_handler,   5)
+X(a, CALLBACK, SINGULAR, STRING,   default_handler,   4) \
+X(a, CALLBACK, SINGULAR, STRING,   protobuf_name,     5)
 #define JoinRequest_CALLBACK pb_default_field_callback
 #define JoinRequest_DEFAULT NULL
 
@@ -191,7 +188,7 @@ extern const pb_msgdesc_t LeaveResponse_msg;
 
 /* Maximum encoded size of messages (where known) */
 #define Header_size                              43
-/* MessageInfo_size depends on runtime parameters */
+#define MessageInfo_size                         6
 #define KeyExchangeRequest_size                  120
 #define KeyExchangeResponse_size                 96
 /* JoinRequest_size depends on runtime parameters */
