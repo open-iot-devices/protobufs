@@ -18,4 +18,7 @@ PB_BIND(Humidity, Humidity, AUTO)
 PB_BIND(Battery, Battery, AUTO)
 
 
+PB_BIND(AmbientLight, AmbientLight, AUTO)
+
+
 

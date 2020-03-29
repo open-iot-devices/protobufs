@@ -14,6 +14,10 @@ extern "C" {
 #endif
 
 /* Struct definitions */
+typedef struct _AmbientLight {
+    uint32_t value;
+} AmbientLight;
+
 typedef struct _Battery {
     uint32_t percent;
     uint32_t voltage_mv;
@@ -33,22 +37,27 @@ typedef struct _MultiSensorStatus {
     Temperature temperature;
     bool has_humidity;
     Humidity humidity;
+    bool has_ambient_light;
+    AmbientLight ambient_light;
     bool has_battery;
     Battery battery;
 } MultiSensorStatus;
 
 
 /* Initializer values for message structs */
-#define MultiSensorStatus_init_default           {false, Temperature_init_default, false, Humidity_init_default, false, Battery_init_default}
+#define MultiSensorStatus_init_default           {false, Temperature_init_default, false, Humidity_init_default, false, AmbientLight_init_default, false, Battery_init_default}
 #define Temperature_init_default                 {0, 0}
 #define Humidity_init_default                    {0}
 #define Battery_init_default                     {0, 0}
-#define MultiSensorStatus_init_zero              {false, Temperature_init_zero, false, Humidity_init_zero, false, Battery_init_zero}
+#define AmbientLight_init_default                {0}
+#define MultiSensorStatus_init_zero              {false, Temperature_init_zero, false, Humidity_init_zero, false, AmbientLight_init_zero, false, Battery_init_zero}
 #define Temperature_init_zero                    {0, 0}
 #define Humidity_init_zero                       {0}
 #define Battery_init_zero                        {0, 0}
+#define AmbientLight_init_zero                   {0}
 
 /* Field tags (for use in manual encoding/decoding) */
+#define AmbientLight_value_tag                   1
 #define Battery_percent_tag                      1
 #define Battery_voltage_mv_tag                   2
 #define Humidity_relative_percent_tag            1
@@ -56,17 +65,20 @@ typedef struct _MultiSensorStatus {
 #define Temperature_value_f_tag                  2
 #define MultiSensorStatus_temperature_tag        1
 #define MultiSensorStatus_humidity_tag           2
+#define MultiSensorStatus_ambient_light_tag      3
 #define MultiSensorStatus_battery_tag            10
 
 /* Struct field encoding specification for nanopb */
 #define MultiSensorStatus_FIELDLIST(X, a) \
 X(a, STATIC,   OPTIONAL, MESSAGE,  temperature,       1) \
 X(a, STATIC,   OPTIONAL, MESSAGE,  humidity,          2) \
+X(a, STATIC,   OPTIONAL, MESSAGE,  ambient_light,     3) \
 X(a, STATIC,   OPTIONAL, MESSAGE,  battery,          10)
 #define MultiSensorStatus_CALLBACK NULL
 #define MultiSensorStatus_DEFAULT NULL
 #define MultiSensorStatus_temperature_MSGTYPE Temperature
 #define MultiSensorStatus_humidity_MSGTYPE Humidity
+#define MultiSensorStatus_ambient_light_MSGTYPE AmbientLight
 #define MultiSensorStatus_battery_MSGTYPE Battery
 
 #define Temperature_FIELDLIST(X, a) \
@@ -86,22 +98,30 @@ X(a, STATIC,   SINGULAR, UINT32,   voltage_mv,        2)
 #define Battery_CALLBACK NULL
 #define Battery_DEFAULT NULL
 
+#define AmbientLight_FIELDLIST(X, a) \
+X(a, STATIC,   SINGULAR, UINT32,   value,             1)
+#define AmbientLight_CALLBACK NULL
+#define AmbientLight_DEFAULT NULL
+
 extern const pb_msgdesc_t MultiSensorStatus_msg;
 extern const pb_msgdesc_t Temperature_msg;
 extern const pb_msgdesc_t Humidity_msg;
 extern const pb_msgdesc_t Battery_msg;
+extern const pb_msgdesc_t AmbientLight_msg;
 
 /* Defines for backwards compatibility with code written before nanopb-0.4.0 */
 #define MultiSensorStatus_fields &MultiSensorStatus_msg
 #define Temperature_fields &Temperature_msg
 #define Humidity_fields &Humidity_msg
 #define Battery_fields &Battery_msg
+#define AmbientLight_fields &AmbientLight_msg
 
 /* Maximum encoded size of messages (where known) */
-#define MultiSensorStatus_size                   34
+#define MultiSensorStatus_size                   42
 #define Temperature_size                         10
 #define Humidity_size                            6
 #define Battery_size                             12
+#define AmbientLight_size                        6
 
 #ifdef __cplusplus
 } /* extern "C" */

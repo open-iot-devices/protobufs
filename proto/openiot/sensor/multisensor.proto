@@ -4,6 +4,7 @@ package sensor;
 message MultiSensorStatus {
     Temperature  temperature = 1;
     Humidity     humidity = 2;
+    AmbientLight ambient_light = 3;
 
     // For battery power sensors - current battery state
     Battery      battery = 10;
@@ -21,4 +22,8 @@ message Humidity {
 message Battery {
     uint32 percent = 1;
     uint32 voltage_mv = 2;
+}
+
+message AmbientLight {
+    uint32 value = 1;
 }
