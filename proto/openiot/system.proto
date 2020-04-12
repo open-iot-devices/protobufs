@@ -30,6 +30,17 @@ message MessageInfo {
     // uint32 should last about 136 years even if device / controller
     // will be sending messages every second
     uint32 sequence = 1;
+    // Date & Time for RTC use case
+    //
+    // Server's time in BCD 24-hour format, e.g
+    // HH:MM:SS
+    // 0x102233 -> 10:22:33
+    // 0x223344 -> 22:33:44
+    uint32 time = 2;
+    // Server's date in BCD format.
+    // YY-MM-DD-WD
+    // 0x20 10 11 01 -> Mon, Oct 11, 2020
+    uint32 date = 3;
 }
 
 // Diffie-Hellman key exchange: device to controller.
