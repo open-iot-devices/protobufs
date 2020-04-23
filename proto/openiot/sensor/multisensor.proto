@@ -8,6 +8,9 @@ message MultiSensorStatus {
 
     // For battery power sensors - current battery state
     Battery      battery = 10;
+
+    // Optional device uptime, in ms
+    uint32       uptime = 11;
 }
 
 message Temperature {

@@ -41,16 +41,17 @@ typedef struct _MultiSensorStatus {
     AmbientLight ambient_light;
     bool has_battery;
     Battery battery;
+    uint32_t uptime;
 } MultiSensorStatus;
 
 
 /* Initializer values for message structs */
-#define MultiSensorStatus_init_default           {false, Temperature_init_default, false, Humidity_init_default, false, AmbientLight_init_default, false, Battery_init_default}
+#define MultiSensorStatus_init_default           {false, Temperature_init_default, false, Humidity_init_default, false, AmbientLight_init_default, false, Battery_init_default, 0}
 #define Temperature_init_default                 {0, 0}
 #define Humidity_init_default                    {0}
 #define Battery_init_default                     {0, 0}
 #define AmbientLight_init_default                {0}
-#define MultiSensorStatus_init_zero              {false, Temperature_init_zero, false, Humidity_init_zero, false, AmbientLight_init_zero, false, Battery_init_zero}
+#define MultiSensorStatus_init_zero              {false, Temperature_init_zero, false, Humidity_init_zero, false, AmbientLight_init_zero, false, Battery_init_zero, 0}
 #define Temperature_init_zero                    {0, 0}
 #define Humidity_init_zero                       {0}
 #define Battery_init_zero                        {0, 0}
@@ -67,13 +68,15 @@ typedef struct _MultiSensorStatus {
 #define MultiSensorStatus_humidity_tag           2
 #define MultiSensorStatus_ambient_light_tag      3
 #define MultiSensorStatus_battery_tag            10
+#define MultiSensorStatus_uptime_tag             11
 
 /* Struct field encoding specification for nanopb */
 #define MultiSensorStatus_FIELDLIST(X, a) \
 X(a, STATIC,   OPTIONAL, MESSAGE,  temperature,       1) \
 X(a, STATIC,   OPTIONAL, MESSAGE,  humidity,          2) \
 X(a, STATIC,   OPTIONAL, MESSAGE,  ambient_light,     3) \
-X(a, STATIC,   OPTIONAL, MESSAGE,  battery,          10)
+X(a, STATIC,   OPTIONAL, MESSAGE,  battery,          10) \
+X(a, STATIC,   SINGULAR, UINT32,   uptime,           11)
 #define MultiSensorStatus_CALLBACK NULL
 #define MultiSensorStatus_DEFAULT NULL
 #define MultiSensorStatus_temperature_MSGTYPE Temperature
@@ -117,7 +120,7 @@ extern const pb_msgdesc_t AmbientLight_msg;
 #define AmbientLight_fields &AmbientLight_msg
 
 /* Maximum encoded size of messages (where known) */
-#define MultiSensorStatus_size                   42
+#define MultiSensorStatus_size                   48
 #define Temperature_size                         10
 #define Humidity_size                            6
 #define Battery_size                             12
